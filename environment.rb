@@ -5,3 +5,5 @@ Bundler.require
 
 require 'active_model'
 require 'active_support'
+
+require 'lib/commands'
