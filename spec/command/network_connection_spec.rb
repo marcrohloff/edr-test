@@ -86,38 +86,116 @@ RSpec.describe Command::NetworkConnection do
 
       describe 'source address validation' do
 
-        it 'should be valid if both source ip and source port are set' do
-          subject.source_ip   = '2.2.2.2'
-          subject.source_port = 22
+        context 'for the tcp protocol' do
+          before { subject.protocol = 'tcp' }
 
-          expect(subject).to be_valid
+          it 'should be valid if both source ip and source port are set' do
+            subject.source_ip   = '2.2.2.2'
+            subject.source_port = 22
+
+            expect(subject).to be_valid
+          end
+
+          it 'should be valid if only the source ip is set' do
+            subject.source_ip   = '2.2.2.2'
+            subject.source_port = nil
+
+            expect(subject).to be_valid
+          end
+
+          it 'should be invalid if only the source port is set' do
+            subject.source_ip   = nil
+            subject.source_port = 22
+
+            expect(subject).not_to be_valid
+            expect(subject.errors).to be_of_kind(:source_port, :present)
+            expect(subject.errors.messages_for(:source_port).sole).to eq('source_port must be absent unless source_ip is set')
+          end
+
+          it 'should be valid if both the source ip and source port are nil' do
+            subject.source_ip   = nil
+            subject.source_port = nil
+
+            expect(subject).to be_valid
+          end
+
         end
 
-        it 'should be valid if only the source ip is set' do
-          subject.source_ip   = '2.2.2.2'
-          subject.source_port = nil
+        context 'for the udp protocol' do
+          before { subject.protocol = 'udp' }
 
-          expect(subject).to be_valid
-        end
+          it 'should be valid if neither source ip nor source port are set' do
+            subject.source_ip   = nil
+            subject.source_port = nil
 
-        it 'should be invalid if only the source port is set' do
-          subject.source_ip   = nil
-          subject.source_port = 22
+            expect(subject).to be_valid
+          end
 
-          expect(subject).not_to be_valid
-          expect(subject.errors).to be_of_kind(:source_port, :present)
-          expect(subject.errors.messages_for(:source_port).sole).to eq('source_port must be absent unless source_ip is set')
-        end
+          it 'should be invalid if the source ip is set' do
+            subject.source_ip   = '2.2.2.2'
+            subject.source_port = nil
 
-        it 'should be valid if both the source ip and source port are nil' do
-          subject.source_ip   = nil
-          subject.source_port = nil
+            expect(subject).not_to be_valid
+            expect(subject.errors).to be_of_kind(:source_ip, :present)
+          end
 
-          expect(subject).to be_valid
+          it 'should be invalid if the source ip is set' do
+            subject.source_ip   = '2.2.2.2'
+            subject.source_port = nil
+
+            expect(subject).not_to be_valid
+            expect(subject.errors).to be_of_kind(:source_ip, :present)
+          end
+
+          it 'should be invalid if the source port is set' do
+            subject.source_ip   = nil
+            subject.source_port = 22
+
+            expect(subject).not_to be_valid
+            expect(subject.errors).to be_of_kind(:source_port, :present)
+          end
+
         end
 
       end
 
+      describe 'data_size validation' do
+
+        context 'for the tcp protocol' do
+          before { subject.protocol = 'tcp' }
+
+          it 'should be valid if the data_size is at least 0' do
+            subject.data_size = 0
+            expect(subject).to be_valid
+          end
+
+          it 'should be invalid if the data_size is less than 0' do
+            subject.data_size = -1
+
+            expect(subject).not_to be_valid
+            expect(subject.errors).to be_of_kind(:data_size, :greater_than_or_equal_to)
+          end
+
+        end
+
+        context 'for the udp protocol' do
+          before { subject.assign_attributes(protocol: 'udp', source_ip: nil, source_port: nil) }
+
+          it 'should be valid if the data_size is greater than 0' do
+            subject.data_size = 1
+            expect(subject).to be_valid
+          end
+
+          it 'should be invalid if the data_size is less than 1' do
+            subject.data_size = 0
+
+            expect(subject).not_to be_valid
+            expect(subject.errors).to be_of_kind(:data_size, :greater_than_or_equal_to)
+          end
+
+        end
+
+      end
     end
 
   end

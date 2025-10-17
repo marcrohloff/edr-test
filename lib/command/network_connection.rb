@@ -26,8 +26,8 @@ module Command
     validates :protocol, inclusion: { in: %w[tcp udp] }
 
     # tcp can connect without sending data but udp is connectionless so data is required
-    validates :data_size, numericality: { greater_than_or_equal_to: 0, if: -> { protocol == 'tcp' } }
     validates :data_size, numericality: { greater_than_or_equal_to: 1, if: -> { protocol == 'udp' } }
+    validates :data_size, numericality: { greater_than_or_equal_to: 0, if: -> { protocol != 'udp' } }
 
     def destination_ip=(address)
       super(normalize_address(address))
