@@ -16,9 +16,18 @@ module Command
               presence: true
 
     # source_port can only be provided if source_ip is provided
+    validates :source_ip, :source_port,
+              absence: { if: -> { protocol == 'udp' },
+                         message: 'source_ip and source_port cannot be configured for udp' }
     validates :source_port,
               absence: { unless: :source_ip,
                          message: 'source_port must be absent unless source_ip is set' }
+
+    validates :protocol, inclusion: { in: %w[tcp udp] }
+
+    # tcp can connect without sending data but udp is connectionless so data is required
+    validates :data_size, numericality: { greater_than_or_equal_to: 0, if: -> { protocol == 'tcp' } }
+    validates :data_size, numericality: { greater_than_or_equal_to: 1, if: -> { protocol == 'udp' } }
 
     def destination_ip=(address)
       super(normalize_address(address))
@@ -66,12 +75,25 @@ module Command
     end
 
     def open_socket
-      TCPSocket.open(destination_ip, destination_port, source_ip, source_port)
+      case protocol
+      when 'tcp'
+        TCPSocket.open(destination_ip, destination_port, source_ip, source_port)
+
+      when 'udp'
+        UDPSocket.new.tap do |socket|
+          socket.connect(destination_ip, destination_port)
+        end
+
+      else
+        raise ArgumentError, "Unsupported protocol: #{protocol}"
+
+      end
     end
 
     def with_socket(&block)
       socket = open_socket
       yield socket
+
     ensure
       socket.close if socket && !socket.closed?
     end
@@ -80,7 +102,7 @@ module Command
       return if source_ip.present? && source_port.present?
 
       local  = socket.local_address
-      self.source_ip   ||= local.ip_address
+      self.source_ip   ||= local.ip_address&.encode(Encoding::UTF_8).presence
       self.source_port ||= local.ip_port
     end
 

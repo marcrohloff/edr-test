@@ -15,7 +15,7 @@ RSpec.describe Command::NetworkConnection do
                                 source_port:          272,
                                 destination_ip:       '3.4.5.6',
                                 destination_port:     321,
-                                protocol:             'udp',
+                                protocol:             'tcp',
                                 data_size:            12) }
 
 
@@ -124,12 +124,96 @@ RSpec.describe Command::NetworkConnection do
 
   describe 'command execution' do
 
-    def mock_tcp_socket(data_size)
-      mock = instance_double('TCPSocket')
+    context 'tcp protocol' do
 
-      allow(mock).to receive(:local_address).and_return(Addrinfo.tcp('9.8.7.6', 54))
+      def mock_tcp_socket(data_size)
+        mock = instance_double('TCPSocket')
 
-      if data_size && data_size > 0
+        allow(mock).to receive(:local_address)
+                         .and_return(Addrinfo.tcp('9.8.7.6', 54))
+
+        if data_size && data_size > 0
+          valid_message = satisfy { |s|
+            s.is_a?(String) &&
+              s.length == data_size
+          }
+          expect(mock).to receive(:send)
+                            .with(valid_message, 0)
+
+        else
+          expect(mock).not_to receive(:send)
+        end
+
+        expect(mock).to receive(:closed?)
+        expect(mock).to receive(:close)
+
+        mock
+      end
+
+      it 'should send network data' do
+        mock_socket = mock_tcp_socket(12)
+        expect(TCPSocket).to receive(:open)
+                               .with('3.4.5.6', 321, '1.2.3.4', 272)
+                               .and_return(mock_socket)
+
+        subject.execute!
+      end
+
+      it 'should not send network data if the data_size is 0' do
+        subject.data_size = 0
+        mock_socket = mock_tcp_socket(0)
+        expect(TCPSocket).to receive(:open)
+                               .with('3.4.5.6', 321, '1.2.3.4', 272)
+                               .and_return(mock_socket)
+
+        subject.execute!
+      end
+
+      it 'should set the source address and port if they are not provided' do
+        subject.source_ip   = nil
+        subject.source_port = nil
+
+        mock_socket = mock_tcp_socket(12)
+        expect(TCPSocket).to receive(:open)
+                               .with('3.4.5.6', 321, nil, nil)
+                               .and_return(mock_socket)
+
+        subject.execute!
+
+        expect(subject.source_ip).to eq('9.8.7.6')
+        expect(subject.source_port).to eq(54)
+      end
+
+      it 'should not set the source address and port if they are already provided' do
+        mock_socket = mock_tcp_socket(12)
+        expect(TCPSocket).to receive(:open)
+                               .with('3.4.5.6', 321, '1.2.3.4', 272)
+                               .and_return(mock_socket)
+
+        subject.execute!
+
+        expect(subject.source_ip).to eq('1.2.3.4')
+        expect(subject.source_port).to eq(272)
+      end
+
+    end
+
+    context 'udp protocol' do
+
+      before do
+        subject.assign_attributes(protocol:   'udp',
+                                  source_ip:   nil,
+                                  source_port: nil)
+      end
+
+      def mock_udp_socket(data_size)
+        mock = instance_double('UDPSocket')
+        expect(mock).to receive(:connect)
+                          .with(subject.destination_ip, subject.destination_port)
+
+        allow(mock).to receive(:local_address)
+                         .and_return(Addrinfo.udp('9.8.7.6', 54))
+
         valid_message = satisfy { |s|
           s.is_a?(String) &&
             s.length == data_size
@@ -137,62 +221,32 @@ RSpec.describe Command::NetworkConnection do
         expect(mock).to receive(:send)
                           .with(valid_message, 0)
 
-      else
-        expect(mock).not_to receive(:send)
+        expect(mock).to receive(:closed?)
+        expect(mock).to receive(:close)
+
+        mock
       end
 
-      expect(mock).to receive(:closed?)
-      expect(mock).to receive(:close)
+      it 'should send network data' do
+        mock_socket = mock_udp_socket(12)
+        expect(UDPSocket).to receive(:new)
+                               .and_return(mock_socket)
 
-      mock
+        subject.execute!
+      end
+
+      it 'should set the source address and port' do
+        mock_socket = mock_udp_socket(12)
+        expect(UDPSocket).to receive(:new)
+                               .and_return(mock_socket)
+
+        subject.execute!
+
+        expect(subject.source_ip).to eq('9.8.7.6')
+        expect(subject.source_port).to eq(54)
+      end
+
     end
-
-    it 'should send network data' do
-      mock_socket = mock_tcp_socket(12)
-      expect(TCPSocket).to receive(:open)
-                             .with('3.4.5.6', 321, '1.2.3.4', 272)
-                             .and_return(mock_socket)
-
-      subject.execute!
-    end
-
-    it 'should not send network data if the data_size is 0' do
-      subject.data_size = 0
-      mock_socket = mock_tcp_socket(0)
-      expect(TCPSocket).to receive(:open)
-                             .with('3.4.5.6', 321, '1.2.3.4', 272)
-                             .and_return(mock_socket)
-
-      subject.execute!
-    end
-
-    it 'should set the source address and port if they are not provided' do
-      subject.source_ip   = nil
-      subject.source_port = nil
-
-      mock_socket = mock_tcp_socket(12)
-      expect(TCPSocket).to receive(:open)
-                             .with('3.4.5.6', 321, nil, nil)
-                             .and_return(mock_socket)
-
-      subject.execute!
-
-      expect(subject.source_ip).to eq('9.8.7.6')
-      expect(subject.source_port).to eq(54)
-    end
-
-    it 'should not set the source address and port if they are already provided' do
-      mock_socket = mock_tcp_socket(12)
-      expect(TCPSocket).to receive(:open)
-                             .with('3.4.5.6', 321, '1.2.3.4', 272)
-                             .and_return(mock_socket)
-
-      subject.execute!
-
-      expect(subject.source_ip).to eq('1.2.3.4')
-      expect(subject.source_port).to eq(272)
-    end
-
   end
 
   it 'should generate the correct log info' do
@@ -204,7 +258,7 @@ RSpec.describe Command::NetworkConnection do
                                        source_port:          272,
                                        destination_ip:       '3.4.5.6',
                                        destination_port:     321,
-                                       protocol:             'udp',
+                                       protocol:             'tcp',
                                        data_size:            12)
   end
 
