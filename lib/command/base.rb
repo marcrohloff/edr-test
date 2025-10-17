@@ -5,6 +5,7 @@ module Command
     include ActiveModel::Model
     include ActiveModel::Attributes
     include ActiveModel::Validations
+    include ActiveModel::Serializers::JSON
 
     attribute :timestamp,            :integer
     attribute :username,             :string
@@ -13,5 +14,15 @@ module Command
 
     validates :timestamp, :username, :process_command_line, :process_id,
               presence: true
+
+    def initialize(...)
+      super
+      self.timestamp ||= Time.now.to_f
+    end
+
+    def activity_log
+      as_json.deep_symbolize_keys
+    end
+
   end
 end
