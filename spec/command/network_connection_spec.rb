@@ -1,0 +1,211 @@
+require 'socket'
+
+require 'spec_helper'
+require_relative './shared_examples'
+
+RSpec.describe Command::NetworkConnection do
+  attributes = %i[destination_ip source_ip source_port destination_port protocol data_size]
+  required_attributes = attributes - %i[source_ip source_port]
+
+  subject { described_class.new(timestamp:            123.4,
+                                username:             'marc',
+                                process_command_line: '/bin/rspec',
+                                process_id:           456,
+                                source_ip:            '1.2.3.4',
+                                source_port:          272,
+                                destination_ip:       '3.4.5.6',
+                                destination_port:     321,
+                                protocol:             'udp',
+                                data_size:            12) }
+
+
+  include_examples 'common command specs'
+
+  describe 'attributes' do
+
+    it 'should have the correct attributes' do
+      expect(described_class.attribute_names).to include(*attributes.map(&:to_s))
+    end
+
+    describe 'address resolution' do
+
+      it 'should accept an ipv4 destination address unchanged' do
+        subject.destination_ip = '34.215.227.142'
+
+        expect(subject.destination_ip).to eq('34.215.227.142')
+      end
+
+      it 'should accept an ipv6 destination address unchanged' do
+        subject.destination_ip = 'fd7a:115c:a1e0:ab12:4843:cd96:626f:e873'
+
+        expect(subject.destination_ip).to eq('fd7a:115c:a1e0:ab12:4843:cd96:626f:e873')
+      end
+
+      it 'should accept a valid destination hostname and resolve it' do
+        subject.destination_ip = 'zscaler.com'
+
+        expect(subject.destination_ip).not_to eq('zscaler.com')
+        expect(subject).to be_valid_ip_address(subject.destination_ip)
+      end
+
+      it 'should accept an ipv4 source address unchanged' do
+        subject.source_ip = '34.215.227.142'
+
+        expect(subject.source_ip).to eq('34.215.227.142')
+      end
+
+      it 'should accept an ipv6 source address unchanged' do
+        subject.source_ip = 'fd7a:115c:a1e0:ab12:4843:cd96:626f:e873'
+
+        expect(subject.source_ip).to eq('fd7a:115c:a1e0:ab12:4843:cd96:626f:e873')
+      end
+
+      it 'should accept a valid source hostname and resolve it' do
+        subject.source_ip = 'zscaler.com'
+
+        expect(subject.source_ip).not_to eq('zscaler.com')
+        expect(subject).to be_valid_ip_address(subject.source_ip)
+      end
+
+    end
+
+    describe 'validation' do
+
+      it 'should be valid' do
+        expect(subject).to be_valid
+      end
+
+      required_attributes.each do |attribute_name|
+        it "should require #{attribute_name} to be set" do
+          subject.assign_attributes(attribute_name => nil)
+
+          expect(subject).to be_invalid
+          expect(subject.errors).to be_of_kind(attribute_name, :blank)
+        end
+      end
+
+      describe 'source address validation' do
+
+        it 'should be valid if both source ip and source port are set' do
+          subject.source_ip   = '2.2.2.2'
+          subject.source_port = 22
+
+          expect(subject).to be_valid
+        end
+
+        it 'should be valid if only the source ip is set' do
+          subject.source_ip   = '2.2.2.2'
+          subject.source_port = nil
+
+          expect(subject).to be_valid
+        end
+
+        it 'should be invalid if only the source port is set' do
+          subject.source_ip   = nil
+          subject.source_port = 22
+
+          expect(subject).not_to be_valid
+          expect(subject.errors).to be_of_kind(:source_port, :present)
+          expect(subject.errors.messages_for(:source_port).sole).to eq('source_port must be absent unless source_ip is set')
+        end
+
+        it 'should be valid if both the source ip and source port are nil' do
+          subject.source_ip   = nil
+          subject.source_port = nil
+
+          expect(subject).to be_valid
+        end
+
+      end
+
+    end
+
+  end
+
+  describe 'command execution' do
+
+    def mock_tcp_socket(data_size)
+      mock = instance_double('TCPSocket')
+
+      allow(mock).to receive(:local_address).and_return(Addrinfo.tcp('9.8.7.6', 54))
+
+      if data_size && data_size > 0
+        valid_message = satisfy { |s|
+          s.is_a?(String) &&
+            s.length == data_size
+        }
+        expect(mock).to receive(:send)
+                          .with(valid_message, 0)
+
+      else
+        expect(mock).not_to receive(:send)
+      end
+
+      expect(mock).to receive(:closed?)
+      expect(mock).to receive(:close)
+
+      mock
+    end
+
+    it 'should send network data' do
+      mock_socket = mock_tcp_socket(12)
+      expect(TCPSocket).to receive(:open)
+                             .with('3.4.5.6', 321, '1.2.3.4', 272)
+                             .and_return(mock_socket)
+
+      subject.execute!
+    end
+
+    it 'should not send network data if the data_size is 0' do
+      subject.data_size = 0
+      mock_socket = mock_tcp_socket(0)
+      expect(TCPSocket).to receive(:open)
+                             .with('3.4.5.6', 321, '1.2.3.4', 272)
+                             .and_return(mock_socket)
+
+      subject.execute!
+    end
+
+    it 'should set the source address and port if they are not provided' do
+      subject.source_ip   = nil
+      subject.source_port = nil
+
+      mock_socket = mock_tcp_socket(12)
+      expect(TCPSocket).to receive(:open)
+                             .with('3.4.5.6', 321, nil, nil)
+                             .and_return(mock_socket)
+
+      subject.execute!
+
+      expect(subject.source_ip).to eq('9.8.7.6')
+      expect(subject.source_port).to eq(54)
+    end
+
+    it 'should not set the source address and port if they are already provided' do
+      mock_socket = mock_tcp_socket(12)
+      expect(TCPSocket).to receive(:open)
+                             .with('3.4.5.6', 321, '1.2.3.4', 272)
+                             .and_return(mock_socket)
+
+      subject.execute!
+
+      expect(subject.source_ip).to eq('1.2.3.4')
+      expect(subject.source_port).to eq(272)
+    end
+
+  end
+
+  it 'should generate the correct log info' do
+    expect(subject.activity_log_entry).to eq(timestamp:            123.4,
+                                       username:             'marc',
+                                       process_command_line: '/bin/rspec',
+                                       process_id:           456,
+                                       source_ip:            '1.2.3.4',
+                                       source_port:          272,
+                                       destination_ip:       '3.4.5.6',
+                                       destination_port:     321,
+                                       protocol:             'udp',
+                                       data_size:            12)
+  end
+
+end
