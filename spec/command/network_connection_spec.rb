@@ -4,17 +4,17 @@ require 'spec_helper'
 require_relative './shared_examples'
 
 RSpec.describe Command::NetworkConnection do
-  attributes = %i[destination_ip source_ip source_port destination_port protocol data_size]
-  required_attributes = attributes - %i[source_ip source_port]
+  attributes = %i[destination_address source_address source_port destination_port protocol data_size]
+  required_attributes = attributes - %i[source_address source_port]
 
   subject { described_class.new(timestamp:              123.4,
                                 username:               'marc',
                                 caller_process_cmdline: '/bin/rspec',
                                 caller_process_name:    'rspec',
                                 caller_process_pid:     456,
-                                source_ip:              '1.2.3.4',
+                                source_address:         '1.2.3.4',
                                 source_port:            272,
-                                destination_ip:         '3.4.5.6',
+                                destination_address:    '3.4.5.6',
                                 destination_port:       321,
                                 protocol:               'tcp',
                                 data_size:              12) }
@@ -31,41 +31,41 @@ RSpec.describe Command::NetworkConnection do
     describe 'address resolution' do
 
       it 'should accept an ipv4 destination address unchanged' do
-        subject.destination_ip = '34.215.227.142'
+        subject.destination_address = '34.215.227.142'
 
-        expect(subject.destination_ip).to eq('34.215.227.142')
+        expect(subject.destination_address).to eq('34.215.227.142')
       end
 
       it 'should accept an ipv6 destination address unchanged' do
-        subject.destination_ip = 'fd7a:115c:a1e0:ab12:4843:cd96:626f:e873'
+        subject.destination_address = 'fd7a:115c:a1e0:ab12:4843:cd96:626f:e873'
 
-        expect(subject.destination_ip).to eq('fd7a:115c:a1e0:ab12:4843:cd96:626f:e873')
+        expect(subject.destination_address).to eq('fd7a:115c:a1e0:ab12:4843:cd96:626f:e873')
       end
 
       it 'should accept a valid destination hostname and resolve it' do
-        subject.destination_ip = 'zscaler.com'
+        subject.destination_address = 'zscaler.com'
 
-        expect(subject.destination_ip).not_to eq('zscaler.com')
-        expect(subject).to be_valid_ip_address(subject.destination_ip)
+        expect(subject.destination_address).not_to eq('zscaler.com')
+        expect(subject).to be_valid_ip_address(subject.destination_address)
       end
 
       it 'should accept an ipv4 source address unchanged' do
-        subject.source_ip = '34.215.227.142'
+        subject.source_address = '34.215.227.142'
 
-        expect(subject.source_ip).to eq('34.215.227.142')
+        expect(subject.source_address).to eq('34.215.227.142')
       end
 
       it 'should accept an ipv6 source address unchanged' do
-        subject.source_ip = 'fd7a:115c:a1e0:ab12:4843:cd96:626f:e873'
+        subject.source_address = 'fd7a:115c:a1e0:ab12:4843:cd96:626f:e873'
 
-        expect(subject.source_ip).to eq('fd7a:115c:a1e0:ab12:4843:cd96:626f:e873')
+        expect(subject.source_address).to eq('fd7a:115c:a1e0:ab12:4843:cd96:626f:e873')
       end
 
       it 'should accept a valid source hostname and resolve it' do
-        subject.source_ip = 'zscaler.com'
+        subject.source_address = 'zscaler.com'
 
-        expect(subject.source_ip).not_to eq('zscaler.com')
-        expect(subject).to be_valid_ip_address(subject.source_ip)
+        expect(subject.source_address).not_to eq('zscaler.com')
+        expect(subject).to be_valid_ip_address(subject.source_address)
       end
 
     end
@@ -90,32 +90,32 @@ RSpec.describe Command::NetworkConnection do
         context 'for the tcp protocol' do
           before { subject.protocol = 'tcp' }
 
-          it 'should be valid if both source ip and source port are set' do
-            subject.source_ip   = '2.2.2.2'
-            subject.source_port = 22
+          it 'should be valid if both source address and source port are set' do
+            subject.source_address = '2.2.2.2'
+            subject.source_port    = 22
 
             expect(subject).to be_valid
           end
 
-          it 'should be valid if only the source ip is set' do
-            subject.source_ip   = '2.2.2.2'
-            subject.source_port = nil
+          it 'should be valid if only the source address is set' do
+            subject.source_address = '2.2.2.2'
+            subject.source_port    = nil
 
             expect(subject).to be_valid
           end
 
           it 'should be invalid if only the source port is set' do
-            subject.source_ip   = nil
-            subject.source_port = 22
+            subject.source_address = nil
+            subject.source_port    = 22
 
             expect(subject).not_to be_valid
             expect(subject.errors).to be_of_kind(:source_port, :present)
-            expect(subject.errors.messages_for(:source_port).sole).to eq('source_port must be absent unless source_ip is set')
+            expect(subject.errors.messages_for(:source_port).sole).to eq('source_port must be absent unless source_address is set')
           end
 
-          it 'should be valid if both the source ip and source port are nil' do
-            subject.source_ip   = nil
-            subject.source_port = nil
+          it 'should be valid if both the source address and source port are nil' do
+            subject.source_address = nil
+            subject.source_port    = nil
 
             expect(subject).to be_valid
           end
@@ -125,32 +125,32 @@ RSpec.describe Command::NetworkConnection do
         context 'for the udp protocol' do
           before { subject.protocol = 'udp' }
 
-          it 'should be valid if neither source ip nor source port are set' do
-            subject.source_ip   = nil
-            subject.source_port = nil
+          it 'should be valid if neither source address nor source port are set' do
+            subject.source_address = nil
+            subject.source_port    = nil
 
             expect(subject).to be_valid
           end
 
-          it 'should be invalid if the source ip is set' do
-            subject.source_ip   = '2.2.2.2'
-            subject.source_port = nil
+          it 'should be invalid if the source address is set' do
+            subject.source_address = '2.2.2.2'
+            subject.source_port    = nil
 
             expect(subject).not_to be_valid
-            expect(subject.errors).to be_of_kind(:source_ip, :present)
+            expect(subject.errors).to be_of_kind(:source_address, :present)
           end
 
-          it 'should be invalid if the source ip is set' do
-            subject.source_ip   = '2.2.2.2'
-            subject.source_port = nil
+          it 'should be invalid if the source address is set' do
+            subject.source_address = '2.2.2.2'
+            subject.source_port    = nil
 
             expect(subject).not_to be_valid
-            expect(subject.errors).to be_of_kind(:source_ip, :present)
+            expect(subject.errors).to be_of_kind(:source_address, :present)
           end
 
           it 'should be invalid if the source port is set' do
-            subject.source_ip   = nil
-            subject.source_port = 22
+            subject.source_address = nil
+            subject.source_port    = 22
 
             expect(subject).not_to be_valid
             expect(subject.errors).to be_of_kind(:source_port, :present)
@@ -180,7 +180,7 @@ RSpec.describe Command::NetworkConnection do
         end
 
         context 'for the udp protocol' do
-          before { subject.assign_attributes(protocol: 'udp', source_ip: nil, source_port: nil) }
+          before { subject.assign_attributes(protocol: 'udp', source_address: nil, source_port: nil) }
 
           it 'should be valid if the data_size is greater than 0' do
             subject.data_size = 1
@@ -249,8 +249,8 @@ RSpec.describe Command::NetworkConnection do
       end
 
       it 'should set the source address and port if they are not provided' do
-        subject.source_ip   = nil
-        subject.source_port = nil
+        subject.source_address = nil
+        subject.source_port    = nil
 
         mock_socket = mock_tcp_socket(12)
         expect(TCPSocket).to receive(:open)
@@ -259,7 +259,7 @@ RSpec.describe Command::NetworkConnection do
 
         subject.execute!
 
-        expect(subject.source_ip).to eq('9.8.7.6')
+        expect(subject.source_address).to eq('9.8.7.6')
         expect(subject.source_port).to eq(54)
       end
 
@@ -271,7 +271,7 @@ RSpec.describe Command::NetworkConnection do
 
         subject.execute!
 
-        expect(subject.source_ip).to eq('1.2.3.4')
+        expect(subject.source_address).to eq('1.2.3.4')
         expect(subject.source_port).to eq(272)
       end
 
@@ -280,15 +280,15 @@ RSpec.describe Command::NetworkConnection do
     context 'udp protocol' do
 
       before do
-        subject.assign_attributes(protocol:   'udp',
-                                  source_ip:   nil,
-                                  source_port: nil)
+        subject.assign_attributes(protocol:       'udp',
+                                  source_address: nil,
+                                  source_port:    nil)
       end
 
       def mock_udp_socket(data_size)
         mock = instance_double('UDPSocket')
         expect(mock).to receive(:connect)
-                          .with(subject.destination_ip, subject.destination_port)
+                          .with(subject.destination_address, subject.destination_port)
 
         allow(mock).to receive(:local_address)
                          .and_return(Addrinfo.udp('9.8.7.6', 54))
@@ -321,7 +321,7 @@ RSpec.describe Command::NetworkConnection do
 
         subject.execute!
 
-        expect(subject.source_ip).to eq('9.8.7.6')
+        expect(subject.source_address).to eq('9.8.7.6')
         expect(subject.source_port).to eq(54)
       end
 
@@ -334,9 +334,9 @@ RSpec.describe Command::NetworkConnection do
                                              caller_process_cmdline: '/bin/rspec',
                                              caller_process_name:    'rspec',
                                              caller_process_pid:     456,
-                                             source_ip:              '1.2.3.4',
+                                             source_address:         '1.2.3.4',
                                              source_port:            272,
-                                             destination_ip:         '3.4.5.6',
+                                             destination_address:    '3.4.5.6',
                                              destination_port:       321,
                                              protocol:               'tcp',
                                              data_size:              12)

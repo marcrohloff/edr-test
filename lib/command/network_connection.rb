@@ -4,24 +4,24 @@ require 'socket'
 
 module Command
   class NetworkConnection < Base
-    attribute :source_ip,        :string
-    attribute :source_port,      :integer
-    attribute :destination_ip,   :string
-    attribute :destination_port, :integer
-    attribute :protocol,         :string
-    attribute :data_size,        :integer
+    attribute :source_address,      :string
+    attribute :source_port,         :integer
+    attribute :destination_address, :string
+    attribute :destination_port,    :integer
+    attribute :protocol,            :string
+    attribute :data_size,           :integer
 
-    validates :destination_ip, :destination_port,
+    validates :destination_address, :destination_port,
               :protocol, :data_size,
               presence: true
 
-    # source_port can only be provided if source_ip is provided
-    validates :source_ip, :source_port,
+    # source_port can only be provided if source_address is provided
+    validates :source_address, :source_port,
               absence: { if: -> { protocol == 'udp' },
-                         message: 'source_ip and source_port cannot be configured for udp' }
+                         message: 'source_address and source_port cannot be configured for udp' }
     validates :source_port,
-              absence: { unless: :source_ip,
-                         message: 'source_port must be absent unless source_ip is set' }
+              absence: { unless: :source_address,
+                         message: 'source_port must be absent unless source_address is set' }
 
     validates :protocol, inclusion: { in: %w[tcp udp] }
 
@@ -29,11 +29,11 @@ module Command
     validates :data_size, numericality: { greater_than_or_equal_to: 1, if: -> { protocol == 'udp' } }
     validates :data_size, numericality: { greater_than_or_equal_to: 0, if: -> { protocol != 'udp' } }
 
-    def destination_ip=(address)
+    def destination_address=(address)
       super(normalize_address(address))
     end
 
-    def source_ip=(address)
+    def source_address=(address)
       super(normalize_address(address))
     end
 
@@ -77,11 +77,11 @@ module Command
     def open_socket
       case protocol
       when 'tcp'
-        TCPSocket.open(destination_ip, destination_port, source_ip, source_port)
+        TCPSocket.open(destination_address, destination_port, source_address, source_port)
 
       when 'udp'
         UDPSocket.new.tap do |socket|
-          socket.connect(destination_ip, destination_port)
+          socket.connect(destination_address, destination_port)
         end
 
       else
@@ -99,11 +99,11 @@ module Command
     end
 
     def set_source_addresses(socket)
-      return if source_ip.present? && source_port.present?
+      return if source_address.present? && source_port.present?
 
       local  = socket.local_address
-      self.source_ip   ||= local.ip_address&.encode(Encoding::UTF_8).presence
-      self.source_port ||= local.ip_port
+      self.source_address ||= local.ip_address&.encode(Encoding::UTF_8).presence
+      self.source_port    ||= local.ip_port
     end
 
   end

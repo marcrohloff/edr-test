@@ -2,14 +2,14 @@ require 'spec_helper'
 require_relative './shared_examples'
 
 RSpec.describe Command::StartProcess do
-  attributes = %i[process_name]
+  attributes = %i[started_process_cmdline]
 
-  subject { described_class.new(timestamp:              123.4,
-                                username:               'marc',
-                                caller_process_cmdline: '/bin/rspec',
-                                caller_process_name:    'rspec',
-                                caller_process_id:      456,
-                                process_name:           'test-process') }
+  subject { described_class.new(timestamp:               123.4,
+                                username:                'marc',
+                                caller_process_cmdline:  '/bin/rspec',
+                                caller_process_name:     'rspec',
+                                caller_process_pid:      456,
+                                started_process_cmdline: 'test-process') }
 
 
   include_examples 'common command specs'
@@ -18,6 +18,10 @@ RSpec.describe Command::StartProcess do
 
     it 'should have the correct attributes' do
       expect(described_class.attribute_names).to include(*attributes.map(&:to_s))
+    end
+
+    it 'should not have a started_process_pid attribute' do
+      expect(described_class.attribute_names).not_to include('started_process_pid')
     end
 
     describe 'validation' do
@@ -42,20 +46,29 @@ RSpec.describe Command::StartProcess do
   describe 'command execution' do
 
     it 'should start a process' do
-      expect(Process).to receive(:spawn).with('test-process').and_return(-1)
+      expect(Process).to receive(:spawn).with('test-process').and_return(1123)
+      expect(Process).to receive(:detach).with(1123)
 
       subject.execute!
+
+      expect(subject.started_process_pid).to eq(1123)
     end
 
   end
 
   it 'should generate the correct log info' do
-    expect(subject.activity_log_entry).to eq(timestamp:              123.4,
-                                             username:               'marc',
-                                             caller_process_cmdline: '/bin/rspec',
-                                             caller_process_name:    'rspec',
-                                             caller_process_id:      456,
-                                             process_name:           'test-process')
+    expect(Process).to receive(:spawn).with('test-process').and_return(1123)
+    expect(Process).to receive(:detach).with(1123)
+
+    subject.execute!
+
+    expect(subject.activity_log_entry).to eq(timestamp:               123.4,
+                                             username:                'marc',
+                                             caller_process_cmdline:  '/bin/rspec',
+                                             caller_process_name:     'rspec',
+                                             caller_process_pid:      456,
+                                             started_process_cmdline: 'test-process',
+                                             started_process_pid:     1123)
   end
 
 end

@@ -32,7 +32,7 @@ module DataSource
         username:               Etc.getlogin,
         caller_process_cmdline: process_command_line,
         caller_process_name:    $PROGRAM_NAME,
-        caller_process_id:      Process.pid,
+        caller_process_pid:     Process.pid,
         protocol:               'tcp'
       }
     end
