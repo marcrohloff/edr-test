@@ -46,7 +46,7 @@ RSpec.describe Command::CreateFile do
   end
 
   it 'should generate the correct log info' do
-    expect(subject.activity_log).to eq(timestamp:            123.4,
+    expect(subject.activity_log_entry).to eq(timestamp:            123.4,
                                        username:             'marc',
                                        process_command_line: '/bin/rspec',
                                        process_id:           456,

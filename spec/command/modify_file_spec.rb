@@ -38,7 +38,7 @@ RSpec.describe Command::ModifyFile do
 
       subject.execute!
 
-      command2 = described_class.new(subject.as_json)
+      command2 = described_class.new(subject.attributes)
       command2.execute!
 
       expect(File).to be_exist(file_path)
@@ -58,7 +58,7 @@ RSpec.describe Command::ModifyFile do
   end
 
   it 'should generate the correct log info' do
-    expect(subject.activity_log).to eq(timestamp:            123.4,
+    expect(subject.activity_log_entry).to eq(timestamp:            123.4,
                                        username:             'marc',
                                        process_command_line: '/bin/rspec',
                                        process_id:           456,
