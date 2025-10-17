@@ -1,11 +1,11 @@
-require_relative 'concerns/abstractable'
-
 module Command
   class Base
     include ActiveModel::Model
     include ActiveModel::Attributes
     include ActiveModel::Validations
     include ActiveModel::Serializers::JSON
+
+    class CommandError < StandardError; end
 
     attribute :timestamp,            :float
     attribute :username,             :string

@@ -4,7 +4,7 @@ require 'spec_helper'
 require_relative './shared_examples'
 require_relative './shared_file_examples'
 
-RSpec.describe Command::CreateFile do
+RSpec.describe Command::DeleteFile do
 
   let (:file_path) { "/tmp/test-file-#{SecureRandom.uuid_v7}" }
 
@@ -24,23 +24,21 @@ RSpec.describe Command::CreateFile do
       FileUtils.rm(file_path, force: true)
     end
 
-    it 'should create a new file if none exists' do
-      FileUtils.rm(file_path, force: true)
-      expect(File).not_to be_exist(file_path)
-
-      subject.execute!
-
-      expect(File).to be_exist(file_path)
-      expect(File.read(file_path)).to eq('file-data')
-    end
-
-    it 'should overwrite the file if it already exists' do
+    it 'should delete the file' do
       File.write(file_path, 'old-data')
 
       subject.execute!
 
-      expect(File).to be_exist(file_path)
-      expect(File.read(file_path)).to eq('file-data')
+      expect(File).not_to be_exist(file_path)
+    end
+
+    it 'should raise an exception if the file does not exist' do
+      FileUtils.rm(file_path, force: true)
+      expect(File).not_to be_exist(file_path)
+
+      expect do
+        subject.execute!
+      end.to raise_error(described_class::CommandError)
     end
 
   end
@@ -50,7 +48,7 @@ RSpec.describe Command::CreateFile do
                                        username:             'marc',
                                        process_command_line: '/bin/rspec',
                                        process_id:           456,
-                                       activity_descriptor:  'created',
+                                       activity_descriptor:  'deleted',
                                        file_path:)
   end
 
