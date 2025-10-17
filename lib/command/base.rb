@@ -7,7 +7,7 @@ module Command
     include ActiveModel::Validations
     include ActiveModel::Serializers::JSON
 
-    attribute :timestamp,            :integer
+    attribute :timestamp,            :float
     attribute :username,             :string
     attribute :process_command_line, :string
     attribute :process_id,           :integer
