@@ -32,6 +32,7 @@ module DataSource
         username:             -> { Etc.getlogin },
         process_command_line: -> { process_command_line },
         process_id:           -> { Process.pid },
+        protocol:             'tcp'
       }
     end
 
