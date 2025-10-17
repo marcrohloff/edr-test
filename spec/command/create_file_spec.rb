@@ -6,7 +6,7 @@ require_relative './shared_file_examples'
 
 RSpec.describe Command::CreateFile do
 
-  let (:file_path) { "/tmp/test-file-#{SecureRandom.uuid_v7}" }
+  let(:file_path) { temp_file_name }
 
   subject { described_class.new(timestamp:            123.4,
                                 username:             'marc',
