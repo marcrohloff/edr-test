@@ -6,7 +6,7 @@ RSpec.describe DataSource::Defaults do
 
     it 'should return true for keys in the lookup tale' do
       expect(subject).to be_contains(:timestamp)
-      expect(subject).to be_contains(:process_id)
+      expect(subject).to be_contains(:caller_process_id)
     end
 
     it 'should return false for keys that are not in the lookup table' do
@@ -25,12 +25,16 @@ RSpec.describe DataSource::Defaults do
       expect(subject.lookup(:username)).to eq(Etc.getlogin)
     end
 
-    it 'should provide a default for the process_command_line' do
-      expect(subject.lookup(:process_command_line)).to match(/\/rspec(\s|$)/)
+    it 'should provide a default for the caller_process_cmdline' do
+      expect(subject.lookup(:caller_process_cmdline)).to match(/\/rspec(\s|$)/)
     end
 
-    it 'should provide a default for the process_id' do
-      expect(subject.lookup(:process_id)).to eq(Process.pid)
+    it 'should provide a default for the caller_process_name' do
+      expect(subject.lookup(:caller_process_name)).to match(/\/rspec(\s|$)/)
+    end
+
+    it 'should provide a default for the caller_process_id' do
+      expect(subject.lookup(:caller_process_id)).to match(Process.pid)
     end
 
     it 'should return nil for an unknown key' do

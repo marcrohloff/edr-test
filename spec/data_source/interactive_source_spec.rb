@@ -37,20 +37,20 @@ RSpec.describe DataSource::InteractiveSource do
   it 'should display the default value if there is one' do
     set_input('user-input')
 
-    allow(command_class).to receive(:attribute_names).and_return([:process_id])
+    allow(command_class).to receive(:attribute_names).and_return([:caller_process_id])
     response = subject.request(command_class)
 
-    expect(output.string).to eq("Enter a value for Process ID [#{Process.pid}]:\n")
-    expect(response).to eq(process_id: 'user-input')
+    expect(output.string).to eq("Enter a value for Caller Process ID [#{Process.pid}]:\n")
+    expect(response).to eq(caller_process_id: 'user-input')
   end
 
   it 'should return the default if there is one and the user enters nothing' do
     set_input('')
 
-    allow(command_class).to receive(:attribute_names).and_return([:process_id])
+    allow(command_class).to receive(:attribute_names).and_return([:caller_process_id])
     response = subject.request(command_class)
 
-    expect(response).to eq(process_id: Process.pid)
+    expect(response).to eq(caller_process_id: Process.pid)
   end
 
   it 'should return multiple values' do

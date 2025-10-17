@@ -8,10 +8,11 @@ RSpec.describe Command::CreateFile do
 
   let(:file_path) { temp_file_name }
 
-  subject { described_class.new(timestamp:            123.4,
-                                username:             'marc',
-                                process_command_line: '/bin/rspec',
-                                process_id:           456,
+  subject { described_class.new(timestamp:              123.4,
+                                username:               'marc',
+                                caller_process_cmdline: '/bin/rspec',
+                                caller_process_name:    'rspec',
+                                caller_process_pid:     456,
                                 file_path:) }
 
 
@@ -46,12 +47,13 @@ RSpec.describe Command::CreateFile do
   end
 
   it 'should generate the correct log info' do
-    expect(subject.activity_log_entry).to eq(timestamp:            123.4,
-                                       username:             'marc',
-                                       process_command_line: '/bin/rspec',
-                                       process_id:           456,
-                                       activity_descriptor:  'created',
-                                       file_path:)
+    expect(subject.activity_log_entry).to eq(timestamp:              123.4,
+                                            username:               'marc',
+                                            caller_process_cmdline: '/bin/rspec',
+                                            caller_process_name:    'rspec',
+                                            caller_process_pid:     456,
+                                            activity_descriptor:    'created',
+                                            file_path:)
   end
 
 end

@@ -6,12 +6,14 @@ module Command
 
     class CommandError < StandardError; end
 
-    attribute :timestamp,            :float
-    attribute :username,             :string
-    attribute :process_command_line, :string
-    attribute :process_id,           :integer
+    attribute :timestamp,              :float
+    attribute :username,               :string
+    attribute :caller_process_cmdline, :string
+    attribute :caller_process_name,    :string
+    attribute :caller_process_pid,     :integer
 
-    validates :timestamp, :username, :process_command_line, :process_id,
+    validates :timestamp, :username,
+              :caller_process_cmdline, :caller_process_name, :caller_process_pid,
               presence: true
 
     def initialize(...)

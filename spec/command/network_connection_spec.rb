@@ -7,16 +7,17 @@ RSpec.describe Command::NetworkConnection do
   attributes = %i[destination_ip source_ip source_port destination_port protocol data_size]
   required_attributes = attributes - %i[source_ip source_port]
 
-  subject { described_class.new(timestamp:            123.4,
-                                username:             'marc',
-                                process_command_line: '/bin/rspec',
-                                process_id:           456,
-                                source_ip:            '1.2.3.4',
-                                source_port:          272,
-                                destination_ip:       '3.4.5.6',
-                                destination_port:     321,
-                                protocol:             'tcp',
-                                data_size:            12) }
+  subject { described_class.new(timestamp:              123.4,
+                                username:               'marc',
+                                caller_process_cmdline: '/bin/rspec',
+                                caller_process_name:    'rspec',
+                                caller_process_pid:     456,
+                                source_ip:              '1.2.3.4',
+                                source_port:            272,
+                                destination_ip:         '3.4.5.6',
+                                destination_port:       321,
+                                protocol:               'tcp',
+                                data_size:              12) }
 
 
   include_examples 'common command specs'
@@ -328,16 +329,17 @@ RSpec.describe Command::NetworkConnection do
   end
 
   it 'should generate the correct log info' do
-    expect(subject.activity_log_entry).to eq(timestamp:            123.4,
-                                       username:             'marc',
-                                       process_command_line: '/bin/rspec',
-                                       process_id:           456,
-                                       source_ip:            '1.2.3.4',
-                                       source_port:          272,
-                                       destination_ip:       '3.4.5.6',
-                                       destination_port:     321,
-                                       protocol:             'tcp',
-                                       data_size:            12)
+    expect(subject.activity_log_entry).to eq(timestamp:              123.4,
+                                             username:               'marc',
+                                             caller_process_cmdline: '/bin/rspec',
+                                             caller_process_name:    'rspec',
+                                             caller_process_pid:     456,
+                                             source_ip:              '1.2.3.4',
+                                             source_port:            272,
+                                             destination_ip:         '3.4.5.6',
+                                             destination_port:       321,
+                                             protocol:               'tcp',
+                                             data_size:              12)
   end
 
 end

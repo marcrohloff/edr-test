@@ -1,5 +1,6 @@
 RSpec.shared_examples 'common command specs' do
-  base_attributes = %i[timestamp username process_command_line process_id]
+  base_attributes = %i[timestamp username
+                       caller_process_cmdline caller_process_name caller_process_pid]
 
   describe 'attributes' do
 

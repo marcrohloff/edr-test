@@ -4,11 +4,12 @@ require_relative './shared_examples'
 RSpec.describe Command::StartProcess do
   attributes = %i[process_name]
 
-  subject { described_class.new(timestamp:            123.4,
-                                username:             'marc',
-                                process_command_line: '/bin/rspec',
-                                process_id:           456,
-                                process_name:         'test-process') }
+  subject { described_class.new(timestamp:              123.4,
+                                username:               'marc',
+                                caller_process_cmdline: '/bin/rspec',
+                                caller_process_name:    'rspec',
+                                caller_process_id:      456,
+                                process_name:           'test-process') }
 
 
   include_examples 'common command specs'
@@ -49,11 +50,12 @@ RSpec.describe Command::StartProcess do
   end
 
   it 'should generate the correct log info' do
-    expect(subject.activity_log_entry).to eq(timestamp:            123.4,
-                                       username:             'marc',
-                                       process_command_line: '/bin/rspec',
-                                       process_id:           456,
-                                       process_name:         'test-process')
+    expect(subject.activity_log_entry).to eq(timestamp:              123.4,
+                                             username:               'marc',
+                                             caller_process_cmdline: '/bin/rspec',
+                                             caller_process_name:    'rspec',
+                                             caller_process_id:      456,
+                                             process_name:           'test-process')
   end
 
 end
