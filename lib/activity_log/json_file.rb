@@ -18,7 +18,7 @@ module ActivityLog
     end
 
     def finish
-      json = JSON.generate(@records)
+      json = JSON.pretty_generate(@records)
       file_write(json)
     end
 
