@@ -23,5 +23,21 @@ module Command
       attributes.deep_symbolize_keys
     end
 
+    def self.command_classes
+      # Note: I intended to keep this flexible by calling `subclasses`
+      #       (with some potential filtering required)
+      #       However the responses are ordered in reverse alphabetical order
+      #       And I wanted to stick to the order given in the document
+      #       So this is just hard-coded for now
+
+      [
+        Command::StartProcess,
+        Command::CreateFile,
+        Command::ModifyFile,
+        Command::DeleteFile,
+        Command::NetworkConnection,
+      ]
+    end
+
   end
 end
