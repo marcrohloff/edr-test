@@ -85,6 +85,13 @@ RSpec.describe Command::NetworkConnection do
         end
       end
 
+      it 'should not accept invalid protcols' do
+        subject.protocol = 'pigeon'
+
+        expect(subject).not_to be_valid
+        expect(subject.errors).to be_of_kind(:protocol, :inclusion)
+      end
+
       describe 'source address validation' do
 
         context 'for the tcp protocol' do

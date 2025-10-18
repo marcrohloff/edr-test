@@ -6,6 +6,8 @@ module ActivityLog
       attr_reader :file
     end
 
+    private
+
     def file_handle
       @file_handle ||= if file.is_a?(String)
                          @file_handle_owned = true

@@ -1,7 +1,7 @@
 require 'spec_helper'
 require_relative './shared_activity_examples'
 
-RSpec.describe Command::Base do
+RSpec.describe Command do
 
   it 'should return the set of command_classes' do
     expect(described_class.command_classes).to contain_exactly(
