@@ -59,6 +59,9 @@ module Runner
       runner = SingleCommandRunner.new(command_class, data_source, context)
       runner.run
 
+    rescue EOFError
+      raise # we need to raise this to ignore an infinite loop
+
     rescue ActiveModel::ValidationError => ex
       display_validation_errors(ex)
       false

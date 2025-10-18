@@ -7,6 +7,8 @@ module Command
     validates :started_process_cmdline,
               presence: true
 
+    def self.activity_type = :process_start
+
     def execute!
       # Run the process in the background so that it doesn't block
       pid = Process.spawn(started_process_cmdline)

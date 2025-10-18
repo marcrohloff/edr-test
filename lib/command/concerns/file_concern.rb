@@ -10,6 +10,10 @@ module Command
                 presence: true
     end
 
+    class_methods do
+      def activity_type = :file_activity
+    end
+
     def initialize(...)
       super
       @activity_descriptor ||= self.class.activity_descriptor.to_s

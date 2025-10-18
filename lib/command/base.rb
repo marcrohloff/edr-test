@@ -22,7 +22,7 @@ module Command
     end
 
     def activity_log_entry
-      attributes.deep_symbolize_keys
+      { activity_type: self.class.activity_type }.merge(attributes.deep_symbolize_keys)
     end
 
     def self.command_classes

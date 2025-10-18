@@ -5,6 +5,7 @@ RSpec.describe Runner::SingleCommandRunner do
   class TestCommand < Command::Base
     attribute :name, :string
     validates :name, presence: true
+    def self.activity_type = :test_activity
     def execute!; end
   end
 

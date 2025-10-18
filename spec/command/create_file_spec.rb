@@ -47,13 +47,14 @@ RSpec.describe Command::CreateFile do
   end
 
   it 'should generate the correct log info' do
-    expect(subject.activity_log_entry).to eq(timestamp:              123.4,
-                                            username:               'marc',
-                                            caller_process_cmdline: '/bin/rspec',
-                                            caller_process_name:    'rspec',
-                                            caller_process_pid:     456,
-                                            activity_descriptor:    'created',
-                                            file_path:)
+    expect(subject.activity_log_entry).to eq(activity_type:        :file_activity,
+                                             timestamp:              123.4,
+                                             username:               'marc',
+                                             caller_process_cmdline: '/bin/rspec',
+                                             caller_process_name:    'rspec',
+                                             caller_process_pid:     456,
+                                             activity_descriptor:    'created',
+                                             file_path:)
   end
 
 end

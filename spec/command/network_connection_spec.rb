@@ -329,7 +329,8 @@ RSpec.describe Command::NetworkConnection do
   end
 
   it 'should generate the correct log info' do
-    expect(subject.activity_log_entry).to eq(timestamp:              123.4,
+    expect(subject.activity_log_entry).to eq(activity_type:        :network_connect,
+                                             timestamp:              123.4,
                                              username:               'marc',
                                              caller_process_cmdline: '/bin/rspec',
                                              caller_process_name:    'rspec',

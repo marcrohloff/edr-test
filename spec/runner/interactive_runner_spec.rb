@@ -5,6 +5,7 @@ RSpec.describe Runner::InteractiveRunner do
   class TestCommand < Command::Base
     attribute :name, :string
     validates :name, presence: true
+    def self.activity_type = :test_activity
     def execute!; end
   end
 
@@ -62,10 +63,12 @@ RSpec.describe Runner::InteractiveRunner do
     subject.run
 
     expect(activity_log.records).to eq([
-      { caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_pid: 123,
-        favorite_color: 'red', name: 'Fred', timestamp: 123456.0, username: 'johndoe'},
-      { caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_pid: 123,
-        name: 'Wilma', timestamp: 123456.0, username: 'johndoe'},
+      { activity_type: :test_activity, timestamp: 123456.0, username: 'johndoe',
+        caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_pid: 123,
+        favorite_color: 'red', name: 'Fred' },
+      { activity_type: :test_activity, timestamp: 123456.0, username: 'johndoe',
+        caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_pid: 123,
+        name: 'Wilma' },
    ])
 
   end
@@ -105,8 +108,9 @@ RSpec.describe Runner::InteractiveRunner do
                                     )
 
     expect(activity_log.records).to  eq([
-      { caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_pid: 123,
-        favorite_color: 'Red', name: 'Fred', timestamp: 123456.0, username: 'johndoe'},
+      { activity_type: :test_activity, timestamp: 123456.0, username: 'johndoe',
+        caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_pid: 123,
+        favorite_color: 'Red', name: 'Fred' },
     ])
   end
 
@@ -139,8 +143,9 @@ RSpec.describe Runner::InteractiveRunner do
     expect(output_lines).to include("An exception occurred: Command::Base::CommandError. Try again\n")
 
     expect(activity_log.records).to  eq([
-      { caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_pid: 123,
-        name: 'Fred', timestamp: 123456.0, username: 'johndoe'},
+      { activity_type: :test_activity, timestamp: 123456.0, username: 'johndoe',
+        caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_pid: 123,
+        name: 'Fred' },
     ])
   end
 

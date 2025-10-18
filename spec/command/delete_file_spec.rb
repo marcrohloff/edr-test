@@ -45,13 +45,14 @@ RSpec.describe Command::DeleteFile do
   end
 
   it 'should generate the correct log info' do
-    expect(subject.activity_log_entry).to eq(timestamp:              123.4,
+    expect(subject.activity_log_entry).to eq(activity_type:        :file_activity,
+                                             timestamp:              123.4,
                                              username:               'marc',
                                              caller_process_cmdline: '/bin/rspec',
                                              caller_process_name:    'rspec',
                                              caller_process_pid:     456,
                                              activity_descriptor:    'deleted',
-                                            file_path:)
+                                             file_path:)
   end
 
 end

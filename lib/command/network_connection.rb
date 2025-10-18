@@ -29,6 +29,8 @@ module Command
     validates :data_size, numericality: { greater_than_or_equal_to: 1, if: -> { protocol == 'udp' } }
     validates :data_size, numericality: { greater_than_or_equal_to: 0, if: -> { protocol != 'udp' } }
 
+    def self.activity_type = :network_connect
+
     def destination_address=(address)
       super(normalize_address(address))
     end

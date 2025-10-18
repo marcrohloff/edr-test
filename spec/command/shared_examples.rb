@@ -8,6 +8,10 @@ RSpec.shared_examples 'common command specs' do
       expect(described_class.attribute_names).to include(*base_attributes.map(&:to_s))
     end
 
+    it 'should not have an activity_type attribute' do
+      expect(described_class.attribute_names).not_to include('activity_type')
+    end
+
     describe 'validation of common attributes' do
 
       it 'should be valid' do
