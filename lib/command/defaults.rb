@@ -1,18 +1,18 @@
 require 'etc'
 
-module DataSource
+module Command
   class Defaults
 
     def initialize
       initialize_lookup
     end
 
-    def contains?(name)
+    def has?(name)
       name = name.to_sym
       @value_lookup.key?(name)
     end
 
-    def lookup(name)
+    def fetch(name)
       name = name.to_sym
       entry = @value_lookup[name]
       return nil unless entry

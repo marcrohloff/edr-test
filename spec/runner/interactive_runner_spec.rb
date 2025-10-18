@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Runner::InteractiveRunner do
 
-  class IRTestCommand < Command::Base
+  class IRTestCommandBase < Command::Base
     include Command::ActivityConcern
     attribute :name, :string
     validates :name, presence: true
@@ -10,25 +10,27 @@ RSpec.describe Runner::InteractiveRunner do
     def execute!; end
   end
 
-  class IRTestCommand2 < IRTestCommand
+  class IRTestCommand1 < IRTestCommandBase
+  end
+
+  class IRTestCommand2 < IRTestCommandBase
     attribute :favorite_color, :string
     validates :favorite_color, presence: true
     def execute!; end
   end
 
-  class IRTestCommand3 < IRTestCommand
+  class IRTestCommand3 < IRTestCommandBase
     def execute!; raise CommandError if name =='badname'; end
   end
 
   let(:input)            { StringIO.new }
   let(:output)           { StringIO.new }
-  let(:defaults)         { DataSource::Defaults.new }
+  let(:defaults)         { Command::Defaults.new }
   let(:logger)           { SpecHelperMethods::RecordingLogger.new }
   let(:activity_log)     { SpecHelperMethods::RecordingActivityLog.new }
   let(:dry_run)          { false }
 
-  let(:context)          { double('context', input:, output:, logger:, activity_log:, defaults:, dry_run:) }
-  subject                { described_class.new(context) }
+  subject                { described_class.new(input:, output:, logger:, activity_log:, defaults:, dry_run:) }
 
   def set_input(*texts)
     texts.each { input.puts(it) }
@@ -36,7 +38,7 @@ RSpec.describe Runner::InteractiveRunner do
   end
 
   before do
-    allow(Command).to receive(:command_classes).and_return([IRTestCommand, IRTestCommand2, IRTestCommand3])
+    allow(Command).to receive(:command_classes).and_return([IRTestCommand1, IRTestCommand2, IRTestCommand3])
   end
 
   it 'should execute multiple commands' do
@@ -60,6 +62,9 @@ RSpec.describe Runner::InteractiveRunner do
 
       '',        # quit
     )
+
+    expect_any_instance_of(IRTestCommand1).to receive(:execute!)
+    expect_any_instance_of(IRTestCommand2).to receive(:execute!)
 
     subject.run
 
@@ -85,18 +90,11 @@ RSpec.describe Runner::InteractiveRunner do
       1234,      # process pid
       '',        # name
       '',        # favorite_color
-                 # validation error occurs here
-
-      123456,    # Timestamp
-      'johndoe', # username
-      '/cmd',    # process cmdline
-      'cmd',     # process name
-      123,       # process pid
-      'Fred',    # name
-      'Red',     # name
 
       '',        # quit
       )
+
+    expect_any_instance_of(IRTestCommand2).not_to receive(:execute!)
 
     subject.run
 
@@ -108,11 +106,7 @@ RSpec.describe Runner::InteractiveRunner do
                                     "Please try again\n",
                                     )
 
-    expect(activity_log.records).to  eq([
-      { activity_type: :test_activity, timestamp: 123456.0, username: 'johndoe',
-        caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_pid: 123,
-        favorite_color: 'Red', name: 'Fred' },
-    ])
+    expect(activity_log.records).to  be_empty
   end
 
   it 'should handle an exception raised by `execute!`' do
@@ -127,14 +121,6 @@ RSpec.describe Runner::InteractiveRunner do
       'badname', # name
                  # exception raised in `execute!` here
 
-
-      123456,    # Timestamp
-      'johndoe', # username
-      '/cmd',    # process cmdline
-      'cmd',     # process name
-      123,       # process pid
-      'Fred',    # name
-
       '',        # quit
     )
 
@@ -143,11 +129,38 @@ RSpec.describe Runner::InteractiveRunner do
     output_lines = output.string.lines
     expect(output_lines).to include("An exception occurred: Command::Errors::CommandError. Try again\n")
 
-    expect(activity_log.records).to  eq([
-      { activity_type: :test_activity, timestamp: 123456.0, username: 'johndoe',
-        caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_pid: 123,
-        name: 'Fred' },
-    ])
+    expect(activity_log.records).to  be_empty
   end
 
+  describe 'with dry_run set to true' do
+
+    let(:dry_run)          { true }
+
+    it 'should not execute the command' do
+      set_input(
+        2,         # Choose TestCommand2
+        123456,    # Timestamp
+        'johndoe', # username
+        '/cmd',    # process cmdline
+        'cmd',     # process name
+        123,       # process pid
+        'Fred',    # name
+        'red',     # color
+
+        '',        # quit
+        )
+
+      expect_any_instance_of(IRTestCommand2).not_to receive(:execute!)
+
+      subject.run
+
+      expect(activity_log.records).to eq([
+                                           { activity_type: :test_activity, timestamp: 123456.0, username: 'johndoe',
+                                             caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_pid: 123,
+                                             favorite_color: 'red', name: 'Fred' },
+                                         ])
+
+    end
+
+  end
 end
