@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require './environment'
+
+parser = CommandLineParser.new(ARGV)
+parser.call
+

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-RSpec.describe Runner::Interactive::AttributeEntry do
+RSpec.describe Runner::InteractiveAttributeEntry do
 
   InteractiveAttributeEntryClass = Data.define(:input, :output, :defaults) do
-    include Runner::Interactive::AttributeEntry
+    include Runner::InteractiveAttributeEntry
     public :assign_attributes
   end
 

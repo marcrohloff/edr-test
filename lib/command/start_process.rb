@@ -1,7 +1,8 @@
 module Command
   class StartProcess < Base
-    attribute :started_process_cmdline, :string
     include ActivityConcern
+
+    attribute :started_process_cmdline, :string
 
     attr_reader :started_process_pid # output only value
 

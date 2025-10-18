@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-RSpec.describe Runner::Interactive::CommandSelection do
+RSpec.describe Runner::InteractiveCommandSelection do
 
   class ICSCommandOne; end
   class ICSCommandTwo; end
 
   InteractiveCommandSelectionClass = Data.define(:input, :output) do
-    include Runner::Interactive::CommandSelection
+    include Runner::InteractiveCommandSelection
     public :select_command_class
     def command_classes = [ICSCommandOne, ICSCommandTwo]
   end

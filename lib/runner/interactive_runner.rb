@@ -2,8 +2,8 @@ module Runner
   class InteractiveRunner
     include Runner::Errors
     include Runner::CommandExecution
-    include Runner::Interactive::CommandSelection
-    include Runner::Interactive::AttributeEntry
+    include Runner::InteractiveCommandSelection
+    include Runner::InteractiveAttributeEntry
 
     attr_reader :input, :output,
                 :logger, :activity_log, :defaults,
