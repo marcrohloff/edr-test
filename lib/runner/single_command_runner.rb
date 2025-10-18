@@ -22,7 +22,9 @@ module Runner
 
       logger.info("Completed #{command_class}")
 
-      true
+    rescue StandardError => ex
+      logger.error("Error #{ex.inspect}")
+      raise
     end
 
   end

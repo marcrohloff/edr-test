@@ -7,7 +7,7 @@ module DataSource
       @context = context
     end
 
-    def request(command_class)
+    def attributes_for(command_class)
       attributes = command_class.attribute_names.map(&:to_sym)
 
       attributes.index_with do |attribute_name|

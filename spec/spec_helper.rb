@@ -1,5 +1,5 @@
 ﻿require './environment'
-require_all '../spec/support'
+require_tree '../spec/support'
 
 RSpec.configure do |config|
   config.include SpecHelperMethods

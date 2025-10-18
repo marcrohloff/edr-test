@@ -19,7 +19,7 @@ RSpec.describe DataSource::InteractiveSource do
     set_input('user-input')
 
     allow(command_class).to receive(:attribute_names).and_return([:source_address])
-    response = subject.request(command_class)
+    response = subject.attributes_for(command_class)
 
     expect(output.string).to eq("Enter a value for Source Address:\n")
     expect(response).to eq(source_address: 'user-input')
@@ -29,7 +29,7 @@ RSpec.describe DataSource::InteractiveSource do
     set_input('')
 
     allow(command_class).to receive(:attribute_names).and_return([:source_address])
-    response = subject.request(command_class)
+    response = subject.attributes_for(command_class)
 
     expect(response).to eq(source_address: nil)
   end
@@ -38,7 +38,7 @@ RSpec.describe DataSource::InteractiveSource do
     set_input('user-input')
 
     allow(command_class).to receive(:attribute_names).and_return([:caller_process_pid])
-    response = subject.request(command_class)
+    response = subject.attributes_for(command_class)
 
     expect(output.string).to eq("Enter a value for Caller Process PID [#{Process.pid}]:\n")
     expect(response).to eq(caller_process_pid:'user-input')
@@ -48,7 +48,7 @@ RSpec.describe DataSource::InteractiveSource do
     set_input('')
 
     allow(command_class).to receive(:attribute_names).and_return([:caller_process_pid])
-    response = subject.request(command_class)
+    response = subject.attributes_for(command_class)
 
     expect(response).to eq(caller_process_pid:Process.pid)
   end
@@ -57,7 +57,7 @@ RSpec.describe DataSource::InteractiveSource do
     set_input('user-source-ip', 'user-source-port')
 
     allow(command_class).to receive(:attribute_names).and_return([:source_address, :source_port])
-    response = subject.request(command_class)
+    response = subject.attributes_for(command_class)
 
     expect(output.string).to eq("Enter a value for Source Address:\nEnter a value for Source Port:\n")
     expect(response).to eq(source_address: 'user-source-ip', source_port: 'user-source-port')
