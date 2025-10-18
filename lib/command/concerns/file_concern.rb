@@ -19,7 +19,7 @@ module Command
       @activity_descriptor ||= self.class.activity_descriptor.to_s
     end
 
-    def activity_log_entry
+    def activity_log_data
       super.merge(activity_descriptor:)
     end
 

@@ -62,7 +62,7 @@ RSpec.describe Command::StartProcess do
 
     subject.execute!
 
-    expect(subject.activity_log_entry).to eq(activity_type:           :process_start,
+    expect(subject.activity_log_data).to eq(activity_type:           :process_start,
                                              timestamp:               123.4,
                                              username:                'marc',
                                              caller_process_cmdline:  '/bin/rspec',

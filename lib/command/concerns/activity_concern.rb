@@ -19,7 +19,7 @@ module Command
       self.timestamp ||= Time.now.to_f
     end
 
-    def activity_log_entry
+    def activity_log_data
       { activity_type: self.class.activity_type }.merge(attributes.deep_symbolize_keys)
     end
 

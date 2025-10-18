@@ -18,7 +18,7 @@ module Command
       @started_process_pid = pid
     end
 
-    def activity_log_entry
+    def activity_log_data
       readonly_attributes = { started_process_pid: }.compact
       super.merge(readonly_attributes)
     end
