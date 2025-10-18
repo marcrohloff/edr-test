@@ -2,20 +2,21 @@ require 'spec_helper'
 
 RSpec.describe Runner::InteractiveRunner do
 
-  class TestCommand < Command::Base
+  class IRTestCommand < Command::Base
+    include Command::ActivityConcern
     attribute :name, :string
     validates :name, presence: true
     def self.activity_type = :test_activity
     def execute!; end
   end
 
-  class TestCommand2 < TestCommand
+  class IRTestCommand2 < IRTestCommand
     attribute :favorite_color, :string
     validates :favorite_color, presence: true
     def execute!; end
   end
 
-  class TestCommand3 < TestCommand
+  class IRTestCommand3 < IRTestCommand
     def execute!; raise CommandError if name =='badname'; end
   end
 
@@ -35,7 +36,7 @@ RSpec.describe Runner::InteractiveRunner do
   end
 
   before do
-    allow(Command::Base).to receive(:command_classes).and_return([TestCommand, TestCommand2, TestCommand3])
+    allow(Command).to receive(:command_classes).and_return([IRTestCommand, IRTestCommand2, IRTestCommand3])
   end
 
   it 'should execute multiple commands' do
@@ -140,7 +141,7 @@ RSpec.describe Runner::InteractiveRunner do
     subject.run
 
     output_lines = output.string.lines
-    expect(output_lines).to include("An exception occurred: Command::Base::CommandError. Try again\n")
+    expect(output_lines).to include("An exception occurred: Command::Errors::CommandError. Try again\n")
 
     expect(activity_log.records).to  eq([
       { activity_type: :test_activity, timestamp: 123456.0, username: 'johndoe',

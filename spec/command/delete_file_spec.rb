@@ -1,7 +1,7 @@
 require 'fileutils'
 
 require 'spec_helper'
-require_relative './shared_examples'
+require_relative './shared_activity_examples'
 require_relative './shared_file_examples'
 
 RSpec.describe Command::DeleteFile do
@@ -16,8 +16,8 @@ RSpec.describe Command::DeleteFile do
                                 file_path:) }
 
 
-  include_examples 'common command specs'
-  include_examples 'common file command specs'
+  it_behaves_like 'an activity command'
+  it_behaves_like 'a file activity'
 
   describe 'command execution' do
 

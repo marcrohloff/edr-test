@@ -1,7 +1,7 @@
 require 'socket'
 
 require 'spec_helper'
-require_relative './shared_examples'
+require_relative './shared_activity_examples'
 
 RSpec.describe Command::NetworkConnection do
   attributes = %i[destination_address source_address source_port destination_port protocol data_size]
@@ -20,7 +20,7 @@ RSpec.describe Command::NetworkConnection do
                                 data_size:              12) }
 
 
-  include_examples 'common command specs'
+  it_behaves_like 'an activity command'
 
   describe 'attributes' do
 

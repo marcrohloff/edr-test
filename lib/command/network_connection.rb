@@ -4,6 +4,8 @@ require 'socket'
 
 module Command
   class NetworkConnection < Base
+    include ActivityConcern
+
     attribute :source_address,      :string
     attribute :source_port,         :integer
     attribute :destination_address, :string

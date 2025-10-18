@@ -1,9 +1,8 @@
 require 'fileutils'
 
-require_relative './concerns/file_concern'
-
 module Command
   class DeleteFile < Base
+    include ActivityConcern
     include FileConcern
 
     def execute!
@@ -19,3 +18,4 @@ module Command
 
   end
 end
+

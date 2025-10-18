@@ -1,5 +1,5 @@
 require 'spec_helper'
-require_relative './shared_examples'
+require_relative './shared_activity_examples'
 
 RSpec.describe Command::StartProcess do
   attributes = %i[started_process_cmdline]
@@ -12,7 +12,7 @@ RSpec.describe Command::StartProcess do
                                 started_process_cmdline: 'test-process') }
 
 
-  include_examples 'common command specs'
+  it_behaves_like 'an activity command'
 
   describe 'attributes' do
 

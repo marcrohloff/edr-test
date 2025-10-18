@@ -20,12 +20,18 @@ module Kernel
 end
 
 require_tree 'config'
-require     'command/base' # This need to be loaded first
+# These need to be loaded first
+require_tree 'command/concerns'
+require      'command/base'
 require_tree 'command'
-require     'data_source/base' # This need to be loaded first
+
+require      'data_source/base' # This need to be loaded first
 require_tree 'data_source'
+
+require_tree 'activity_log/concerns'
 require_tree 'activity_log'
 require_tree 'runner'
+
 require      'multiplexer'
 require      'command_line_parser'
 

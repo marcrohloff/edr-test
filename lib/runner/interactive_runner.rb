@@ -87,7 +87,7 @@ module Runner
     end
 
     def command_classes
-      @command_classes ||= Command::Base.command_classes
+      @command_classes ||= Command.command_classes
     end
 
     def human_command_name(command_class)

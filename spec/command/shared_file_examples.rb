@@ -1,4 +1,4 @@
-RSpec.shared_examples 'common file command specs' do
+RSpec.shared_examples 'a file activity' do
   file_attributes = %i[file_path]
 
   describe 'attributes' do

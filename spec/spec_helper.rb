@@ -1,4 +1,4 @@
-﻿require './environment'
+﻿require      './environment'
 require_tree '../spec/support'
 
 RSpec.configure do |config|

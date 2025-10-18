@@ -1,7 +1,6 @@
-require_relative './concerns/file_concern'
-
 module Command
   class ModifyFile < Base
+    include ActivityConcern
     include FileConcern
 
     def execute!

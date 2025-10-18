@@ -1,7 +1,5 @@
 require 'json'
 
-require_relative 'concerns/file_handle_concern'
-
 module ActivityLog
   class JsonFile
     include FileHandleConcern
