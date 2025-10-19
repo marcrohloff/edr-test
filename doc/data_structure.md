@@ -19,24 +19,24 @@ that you would probably have your own names in place)
 
 All logged activities share the following common attributes:
 
-| attribute             | type   | description                           |
-|-----------------------|--------|---------------------------------------|
+| attribute            | type   | description                           |
+|----------------------|--------|---------------------------------------|
 | activity_type | string | tag for type of activity (eg. "process_start") |
-| timestamp             | float  | unix timestamp (with fractional part) |
-| username              | string | user name of user owning the process  |
+| timestamp            | float  | unix timestamp (with fractional part) |
+| username             | string | user name of user owning the process  |
 | caller_process_cmdline | string | command line of running process       |
-| caller_process_name   | string | process name                          |
-| caller_process_pid    | integer | process id of running process         |
+| caller_process_name  | string | process name                          |
+| caller_process_id    | integer | process id of running process         |
 
 In addition each activity adds it's own set of custom attributes as follow:
 
 ### Process Start
 
-| attribute               | type    | description                          |
-|-------------------------|---------|--------------------------------------|
-| activity_type           | string  | hard-coded to "process_start"        |
+| attribute              | type    | description                          |
+|------------------------|---------|--------------------------------------|
+| activity_type          | string  | hard-coded to "process_start"        |
 | started_process_cmdline | string  | command line of process to start     |
-| started_process_pid     | integer | id of the started process  |
+| started_process_id     | integer | id of the started process  |
 
 ### File Activities
 

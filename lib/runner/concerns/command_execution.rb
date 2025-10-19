@@ -1,9 +1,17 @@
+# A cern for executing a command
+#
+# Standardizes what happens when a command is executed
+#   (Validation, dry run, logging, error handling)
+
 module Runner
   module CommandExecution
     extend ActiveSupport::Concern
 
     private
 
+    # Execute a command with validation, logging and error handling
+    #
+    # @param command [Command] The command to execute
     def execute_command(command)
       logger.info("Running #{command.inspect}")
 

@@ -1,3 +1,7 @@
+# A runner to run a request loop for the interactive UI
+#
+# Requests commands until no command is selcted
+
 module Runner
   class InteractiveRunner
     include Runner::Errors
@@ -20,6 +24,7 @@ module Runner
       @dry_run      = dry_run
     end
 
+    # Run main command request loop until enter is pressed
     def run
       loop do
         command_class = select_command_class

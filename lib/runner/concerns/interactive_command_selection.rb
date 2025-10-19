@@ -1,9 +1,14 @@
+# A concern to select a command to run from the interactive UI
+
 module Runner
   module InteractiveCommandSelection
     extend ActiveSupport::Concern
 
     private
 
+    # Select the next command class to execute
+    #
+    #@return [Class<Command>|nil] Returns the command class selected or nil if none is selected
     def select_command_class
       display_command_choices
 

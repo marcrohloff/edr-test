@@ -1,5 +1,9 @@
 require 'json'
 
+# An Activity Log that rites a single JSON representation for all entries to a file
+#
+# See ActiityLog::JsonStream for documentation
+
 module ActivityLog
   class JsonFile
     include FileHandleConcern

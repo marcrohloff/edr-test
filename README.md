@@ -12,7 +12,8 @@ of events for comparison with the output from the EDR agents.
 
 ### Getting Started
 
-* Make sure that `ruby` and `bundler` are installed
+* Make sure that `ruby` and `bundler` are installed.
+  (This was tested with Ruby 3.4.7)
 * Install the required gems using  
 `bundle install`
 * run the app  
@@ -46,6 +47,10 @@ For example, I assume that a real world app would need to transmit it over
 the wire or through a message quueue. You will see I created a few different,
 configurable activity loggers inclduing one for debugging to the display.
 
+For commands, I separated out the code for Activities into a concern. 
+This allowed me to create Commands that did not generate activity but
+might be useful to run from a script (I implemented a simple `Wait` command)
+
 ### Activity Log Data Structure
 
 There Was quite a bit of ambiguity here so I created what seemed logical to 
@@ -57,7 +62,6 @@ as the default output format. Basically each line in
 the file is a complete json hash representing a single entry. This allows it to 
 write, read and process large amounts of data  wthout the overhead of trying to
 parse a whole file
-
 
 * MOre extensive documentation of the data structure is [here](doc/data_structure.md)
 

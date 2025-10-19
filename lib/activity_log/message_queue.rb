@@ -1,3 +1,8 @@
+# An Activity Log that displays output to the interactive display
+# @note: This is just a proof of concept of how it could work if completed
+#
+# See ActiityLog::JsonStream for documentation
+
 module ActivityLog
   class MessageQueue
     attr_reader :hostname, :queue_name

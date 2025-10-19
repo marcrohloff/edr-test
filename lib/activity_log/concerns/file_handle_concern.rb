@@ -1,3 +1,8 @@
+# Concern to handle opening and writing files
+#
+# Takes into account that a file can be a file name or an IO object.
+# IO objects passed in are not owned by the class and shouldn't be closed
+
 module ActivityLog
   module FileHandleConcern
     extend ActiveSupport::Concern

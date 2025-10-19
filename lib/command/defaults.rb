@@ -1,5 +1,9 @@
 require 'etc'
 
+# Class to lookup default values for attributes
+#
+# This class stores values that make sense to be global (like `caller_process_id`) or dynamic (like `timestamp`
+
 module Command
   class Defaults
 
@@ -7,11 +11,19 @@ module Command
       initialize_lookup
     end
 
+    # Check if the attribute name has a default value
+    #
+    #@param name [Symbol]  name to check for in default table
+    #@result     [Boolean] `true` if the `name` has a default
     def has?(name)
       name = name.to_sym
       @value_lookup.key?(name)
     end
 
+    # Return the default value for an attribute name
+    #
+    #@param name [Symbol] name to lookup in default table
+    #@result     [Any]
     def fetch(name)
       name = name.to_sym
       entry = @value_lookup[name]
@@ -27,6 +39,8 @@ module Command
     private
 
     def initialize_lookup
+      # This table can contain a lookup or a Proc
+      # If a proc is used then it is called to calculate a dynamic (changing) value
       @value_lookup = {
         timestamp:              -> { Time.now.to_f },
         username:               Etc.getlogin,

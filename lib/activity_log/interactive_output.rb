@@ -1,3 +1,7 @@
+# An Activity Log that displays output to the interactive display
+#
+# See ActiityLog::JsonStream for documentation
+
 module ActivityLog
   class InteractiveOutput
 

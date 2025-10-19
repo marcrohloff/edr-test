@@ -1,5 +1,5 @@
-####################################
-# Proof of concept
+# A runner to loop through entries in a script file and run command
+# @note: This is a proof of concept and is incomplete
 
 module Runner
   class FileInputRunner

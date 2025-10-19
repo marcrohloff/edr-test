@@ -1,3 +1,11 @@
+# Multiplexer class to send methods to multiple instances in a unified manner
+#
+# Here it is used to be able to unify multiple activity_logs
+#
+# @example
+#   all_logs = Multiplexer.new(Logger.new($stdout), Logger.new('log/production.log')]
+#   all_logs.info('Starting command')
+
 class Multiplexer
   attr_reader :instances
 

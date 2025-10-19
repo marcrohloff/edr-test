@@ -1,3 +1,5 @@
+# Start another process
+
 module Command
   class StartProcess < Base
     include ActivityConcern
@@ -11,6 +13,7 @@ module Command
 
     def self.activity_type = :process_start
 
+    # Start the process and detach from it
     def execute!
       # Run the process in the background so that it doesn't block
       pid = Process.spawn(started_process_cmdline)

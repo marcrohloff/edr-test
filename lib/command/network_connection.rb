@@ -2,6 +2,12 @@ require 'ipaddr'
 require 'resolv'
 require 'socket'
 
+# Activity Command to connect to a network endpoint
+# TCP connections can connect without sending data by setting `data_size` to 0
+
+# `source_address` and `source_port` cannot be preconfigured for UDP.
+# The library does not support this.
+
 module Command
   class NetworkConnection < Base
     include ActivityConcern
@@ -41,6 +47,7 @@ module Command
       super(normalize_address(address))
     end
 
+    # Connect and transmit the data
     def execute!
       with_socket do |socket|
         set_source_addresses(socket)

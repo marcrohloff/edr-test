@@ -1,3 +1,5 @@
+# A concern with functionality to set command attrivutes from an interactive interface
+
 module Runner
   module InteractiveAttributeEntry
     extend ActiveSupport::Concern
@@ -5,6 +7,9 @@ module Runner
 
     private
 
+    # Read values for a command's attributes from the UI and set them
+    #
+    # @param command [Command] The command to get the attributes for
     def assign_attributes(command)
       attribute_names = command.attribute_names.map(&:to_sym)
 

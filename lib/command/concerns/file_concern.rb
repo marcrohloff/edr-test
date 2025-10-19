@@ -1,3 +1,7 @@
+# A concern to be mixed into `Command`s that are file commands
+#
+# This concern provides for an activity_descriptor and other common attributes
+
 module Command
   module FileConcern
     extend ActiveSupport::Concern

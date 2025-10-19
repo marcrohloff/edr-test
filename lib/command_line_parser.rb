@@ -1,6 +1,8 @@
 require 'optparse'
 require 'fileutils'
 
+# Class to parse the command line and run the app
+
 class CommandLineParser
 
   attr_reader :options, :argv
