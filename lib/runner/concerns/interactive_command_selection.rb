@@ -37,7 +37,7 @@ module Runner
       output.puts
       output.puts 'Available commands:'
       command_classes.each.with_index do |command_class, i|
-        output.puts "  (#{i + 1}) #{human_command_name(command_class)}"
+        output.puts "  (#{i + 1}) #{human_command_name(command_class)} (#{command_class.command_name})"
       end
       output.puts 'Choose a command number [enter to quit]:'
     end

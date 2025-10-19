@@ -21,7 +21,7 @@ of events for comparison with the output from the EDR agents.
 * run the app in interactive mode  
   `./edr-test`
 * There are some additional options that you can view by running  
-`./edr-test --help`
+  `./edr-test --help`
 
 ### Using the app
 

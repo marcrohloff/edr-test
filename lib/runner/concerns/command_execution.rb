@@ -15,34 +15,37 @@ module Runner
     def execute_command(command)
       logger.info("Running #{command.command_name.inspect}")
 
-      command.validate!
-      command.execute! unless dry_run
+      unless command.valid?
+        logger.warn("Validation Errors: #{command.errors.full_messages.join(', ')}")
+        display_validation_errors(command)
+        return false
+      end
+
+      unless dry_run
+        begin
+          command.execute!
+        rescue => ex
+          logger.error("Error: #{ex.inspect}")
+          display_exception(ex)
+          return false
+        end
+      end
 
       activity_log.record(command.activity_log_data) if command.respond_to?(:activity_log_data)
       logger.info("Completed #{command.class}")
 
       true
-
-    rescue ActiveModel::ValidationError => ex
-      display_validation_errors(ex, command)
-      false
-
-    # Re-raise exceptions that will get us stuck in an infinite loop
-    rescue EOFError => ex
-      display_exception(ex)
-      raise
-
-    rescue StandardError => ex
-      display_exception(ex)
-      false
     end
 
-    def display_validation_errors(ex, _command)
-      logger.warn("Validation Error: #{ex.inspect}")
+    def display_validation_errors(command)
+      output.puts("The parameters for #{command.command_name} were invalid:")
+      command.errors.full_messages.each { output.puts "  #{it}" }
     end
 
     def display_exception(ex)
-      logger.error("Error: #{ex.inspect}")
+      message = "An exception occurred: #{ex.message}"
+      message += " (#{ex.class})" unless ex.respond_to?(:quiet_exception)
+      output.puts(message)
     end
 
   end

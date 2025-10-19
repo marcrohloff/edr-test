@@ -64,7 +64,7 @@ class CommandLineParser
         options.script_file = fn if fn.present?
       end
 
-      parser.on('-o', '--activity_log FILEPATH',
+      parser.on('-o', '--activity-log FILEPATH',
                 "Output activity to the given path (default: #{options.activity_log_file})") do |fn|
         options.activity_log_file = fn
       end
@@ -74,7 +74,7 @@ class CommandLineParser
         options.logger_file  = fn
       end
 
-      parser.on("-x", "--dryrun",
+      parser.on("-x", "--dry-run", "--dryrun",
                 "Dry run without executing commands") do
         options.dry_run = true
       end

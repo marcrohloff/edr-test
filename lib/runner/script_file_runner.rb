@@ -76,9 +76,9 @@ module Runner
       command = command_class.new
       assign_attributes(command, attributes)
 
-      result = execute_command(command)
-      output.puts if result
-      result
+      success = execute_command(command)
+      output.puts success ? '' : 'Terminating script'
+      success
     end
 
     def parse_script_command(line_data)
@@ -121,23 +121,6 @@ module Runner
         command.assign_attributes(attribute_name => value)
       end
 
-    end
-
-    def display_validation_errors(ex, command)
-      super
-
-      output.puts("The parameters for #{command.command_name} were invalid:")
-      command.errors.full_messages.each { output.puts "  #{it}" }
-      output.puts('Terminating script')
-    end
-
-    def display_exception(ex)
-      super
-
-      message = "An exception occurred: #{ex.message}"
-      message += " (#{ex.class})" unless ex.respond_to?(:expected_exception)
-      output.puts(message)
-      output.puts('Terminating script')
     end
 
   end

@@ -32,6 +32,8 @@ module Runner
 
         process_one_command(command_class)
       end
+
+      nil
     end
 
     private
@@ -40,22 +42,9 @@ module Runner
       command = command_class.new
       assign_attributes(command)
 
-      execute_command(command)
-    end
-
-    def display_validation_errors(ex, command)
-      super
-
-      command = ex.model
-      output.puts("The parameters were invalid:")
-      command.errors.full_messages.each { output.puts "  #{it}" }
-      output.puts("Please try again")
-    end
-
-    def display_exception(ex)
-      super
-
-      output.puts("An exception occurred: #{ex.message}. Try again")
+      success = execute_command(command)
+      output.puts("Please try again") unless success
+      success
     end
 
   end

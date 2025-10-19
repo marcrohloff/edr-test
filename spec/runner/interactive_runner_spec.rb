@@ -102,7 +102,7 @@ RSpec.describe Runner::InteractiveRunner do
 
     output_lines = output.string.lines
     expect(output_lines).to include(
-                                    "The parameters were invalid:\n",
+                                    "The parameters for sfr_test_command2 were invalid:\n",
                                     "  Name can't be blank\n",
                                     "  Favorite color can't be blank\n",
                                     "Please try again\n",
@@ -131,7 +131,7 @@ RSpec.describe Runner::InteractiveRunner do
     output_lines = output.string.lines
     expect(output_lines).to include(
                                      "An exception occurred: A command error\n",
-                                     "Try again\n"
+                                     "Please try again\n"
                                     )
 
     expect(activity_log.records).to  be_empty

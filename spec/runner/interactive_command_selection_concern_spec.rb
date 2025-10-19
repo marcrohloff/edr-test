@@ -8,8 +8,8 @@ RSpec.describe Runner::InteractiveCommandSelection do
     end
   end
 
-  class ICSCommandOne; end
-  class ICSCommandTwo; end
+  class ICSCommandOne < Command::Base; end
+  class ICSCommandTwo < Command::Base; end
 
   InteractiveCommandSelectionClass = Data.define(:input, :output) do
     include Runner::InteractiveCommandSelection
@@ -35,8 +35,8 @@ RSpec.describe Runner::InteractiveCommandSelection do
     lines = output.string.lines
     expect(lines).to include(
                              "Available commands:\n",
-                             "  (1) ICS Command One\n",
-                             "  (2) ICS Command Two\n",
+                             "  (1) ICS Command One (ics_command_one)\n",
+                             "  (2) ICS Command Two (ics_command_two)\n",
                              "Choose a command number [enter to quit]:\n",
                             )
   end

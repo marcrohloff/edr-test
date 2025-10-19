@@ -11,6 +11,7 @@ module Command
 
     include Command::Errors
 
+    # Get the command name to use in script inputs, logs and output
     def self.command_name
       name.demodulize.underscore.to_sym
     end
