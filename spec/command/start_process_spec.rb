@@ -14,6 +14,10 @@ RSpec.describe Command::StartProcess do
 
   it_behaves_like 'an activity command'
 
+  it 'should have the correct command_name' do
+    expect(subject.command_name).to eq(:start_process)
+  end
+
   describe 'attributes' do
 
     it 'should have the correct attributes' do

@@ -19,6 +19,10 @@ RSpec.describe Command::CreateFile do
   it_behaves_like 'an activity command'
   it_behaves_like 'a file activity'
 
+  it 'should have the correct command_name' do
+    expect(subject.command_name).to eq(:create_file)
+  end
+
   describe 'command execution' do
 
     after do

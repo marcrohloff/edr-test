@@ -11,10 +11,18 @@ module Command
 
     include Command::Errors
 
+    def self.command_name
+      name.demodulize.underscore.to_sym
+    end
+
+    delegate :command_name,
+             to: :class
+
     # Over-ride to implement the Command's action
     def execute!
       raise NoMethodError
     end
+
 
   end
 end

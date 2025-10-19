@@ -22,6 +22,10 @@ RSpec.describe Command::NetworkConnection do
 
   it_behaves_like 'an activity command'
 
+  it 'should have the correct command_name' do
+    expect(subject.command_name).to eq(:network_connection)
+  end
+
   describe 'attributes' do
 
     it 'should have the correct attributes' do
