@@ -13,7 +13,7 @@ module Runner
     #
     # @param command [Command] The command to execute
     def execute_command(command)
-      logger.info("Running #{command.inspect}")
+      logger.info("Running #{command.command_name.inspect}")
 
       command.validate!
       command.execute! unless dry_run

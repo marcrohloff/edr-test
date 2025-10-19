@@ -2,6 +2,12 @@ require 'spec_helper'
 
 RSpec.describe Runner::InteractiveCommandSelection do
 
+  before(:all) do
+    ActiveSupport::Inflector.inflections(:en) do |inflect|
+      inflect.acronym 'ICS'
+    end
+  end
+
   class ICSCommandOne; end
   class ICSCommandTwo; end
 
@@ -18,12 +24,6 @@ RSpec.describe Runner::InteractiveCommandSelection do
   def set_input(*texts)
     texts.each { input.puts(it) }
     input.rewind
-  end
-
-  before(:all) do
-    ActiveSupport::Inflector.inflections(:en) do |inflect|
-      inflect.acronym 'ICS'
-    end
   end
 
   it 'should ask the class and return it' do

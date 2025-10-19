@@ -1,0 +1,11 @@
+---
+- command: create_file
+  file_path: test.file
+
+- command: wait
+  delay: 2
+
+- command: delete_file
+  file_path: test.file
+  username: fred
+  caller_process_id: 123

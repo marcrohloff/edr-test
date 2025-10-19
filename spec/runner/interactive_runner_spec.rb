@@ -2,25 +2,27 @@ require 'spec_helper'
 
 RSpec.describe Runner::InteractiveRunner do
 
-  class IRTestCommandBase < Command::Base
+  class SFRTestCommandBase < Command::Base
     include Command::ActivityConcern
     attribute :name, :string
     validates :name, presence: true
-    def self.activity_type = :test_activity
     def execute!; end
   end
 
-  class IRTestCommand1 < IRTestCommandBase
+  class SFRTestCommand1 < SFRTestCommandBase
+    def self.activity_type = :test_activity_1
   end
 
-  class IRTestCommand2 < IRTestCommandBase
+  class SFRTestCommand2 < SFRTestCommandBase
     attribute :favorite_color, :string
     validates :favorite_color, presence: true
     def execute!; end
+    def self.activity_type = :test_activity_2
   end
 
-  class IRTestCommand3 < IRTestCommandBase
-    def execute!; raise CommandError if name =='badname'; end
+  class SFRTestCommand3 < SFRTestCommandBase
+    def execute!; raise(CommandError, 'A command error') if name =='badname'; end
+    def self.activity_type = :test_activity_3
   end
 
   let(:input)            { StringIO.new }
@@ -38,7 +40,7 @@ RSpec.describe Runner::InteractiveRunner do
   end
 
   before do
-    allow(Command).to receive(:command_classes).and_return([IRTestCommand1, IRTestCommand2, IRTestCommand3])
+    allow(Command).to receive(:command_classes).and_return([SFRTestCommand1, SFRTestCommand2, SFRTestCommand3])
   end
 
   it 'should execute multiple commands' do
@@ -63,16 +65,16 @@ RSpec.describe Runner::InteractiveRunner do
       '',        # quit
     )
 
-    expect_any_instance_of(IRTestCommand1).to receive(:execute!)
-    expect_any_instance_of(IRTestCommand2).to receive(:execute!)
+    expect_any_instance_of(SFRTestCommand1).to receive(:execute!)
+    expect_any_instance_of(SFRTestCommand2).to receive(:execute!)
 
     subject.run
 
     expect(activity_log.records).to eq([
-      { activity_type: :test_activity, timestamp: 123456.0, username: 'johndoe',
+      { activity_type: :test_activity_2, timestamp: 123456.0, username: 'johndoe',
         caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_id: 123,
         favorite_color: 'red', name: 'Fred' },
-      { activity_type: :test_activity, timestamp: 123456.0, username: 'johndoe',
+      { activity_type: :test_activity_1, timestamp: 123456.0, username: 'johndoe',
         caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_id: 123,
         name: 'Wilma' },
    ])
@@ -94,7 +96,7 @@ RSpec.describe Runner::InteractiveRunner do
       '',        # quit
       )
 
-    expect_any_instance_of(IRTestCommand2).not_to receive(:execute!)
+    expect_any_instance_of(SFRTestCommand2).not_to receive(:execute!)
 
     subject.run
 
@@ -127,7 +129,10 @@ RSpec.describe Runner::InteractiveRunner do
     subject.run
 
     output_lines = output.string.lines
-    expect(output_lines).to include("An exception occurred: Command::Errors::CommandError. Try again\n")
+    expect(output_lines).to include(
+                                     "An exception occurred: A command error\n",
+                                     "Try again\n"
+                                    )
 
     expect(activity_log.records).to  be_empty
   end
@@ -150,12 +155,12 @@ RSpec.describe Runner::InteractiveRunner do
         '',        # quit
         )
 
-      expect_any_instance_of(IRTestCommand2).not_to receive(:execute!)
+      expect_any_instance_of(SFRTestCommand2).not_to receive(:execute!)
 
       subject.run
 
       expect(activity_log.records).to eq([
-                                           { activity_type: :test_activity, timestamp: 123456.0, username: 'johndoe',
+                                           { activity_type: :test_activity_2, timestamp: 123456.0, username: 'johndoe',
                                              caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_id: 123,
                                              favorite_color: 'red', name: 'Fred' },
                                          ])

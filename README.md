@@ -16,8 +16,10 @@ of events for comparison with the output from the EDR agents.
   (This was tested with Ruby 3.4.7)
 * Install the required gems using  
 `bundle install`
-* run the app  
-`./edr-test`
+* run the app with a script file (yaml or json are supported)  
+  `./edr-test  --script sample-script.yaml`
+* run the app in interactive mode  
+  `./edr-test`
 * There are some additional options that you can view by running  
 `./edr-test --help`
 

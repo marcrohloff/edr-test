@@ -24,8 +24,16 @@ module SpecHelperMethods
     end
   end
 
-  def temp_file_name
-    Dir::Tmpname.create('') { it }
+  def temp_file_name(extension = nil)
+    fn = Dir::Tmpname.create('') { it }
+
+    if extension
+      extension = '.' + extension unless extension.start_with?('.')
+      fn = fn.sub(/(\.[^.]*)?$/,  # make sure we only get the last '.'
+                   extension)
+    end
+
+    fn
   end
 
 end

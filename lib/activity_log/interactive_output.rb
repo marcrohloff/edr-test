@@ -14,7 +14,7 @@ module ActivityLog
     def start; end
 
     def record(data)
-      output.puts("Activity: #{data.inspect}")
+      output.puts(">> Activity: #{data.inspect}")
     end
 
     def finish; end
