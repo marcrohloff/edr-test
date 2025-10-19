@@ -70,10 +70,10 @@ RSpec.describe Runner::InteractiveRunner do
 
     expect(activity_log.records).to eq([
       { activity_type: :test_activity, timestamp: 123456.0, username: 'johndoe',
-        caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_pid: 123,
+        caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_id: 123,
         favorite_color: 'red', name: 'Fred' },
       { activity_type: :test_activity, timestamp: 123456.0, username: 'johndoe',
-        caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_pid: 123,
+        caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_id: 123,
         name: 'Wilma' },
    ])
 
@@ -156,7 +156,7 @@ RSpec.describe Runner::InteractiveRunner do
 
       expect(activity_log.records).to eq([
                                            { activity_type: :test_activity, timestamp: 123456.0, username: 'johndoe',
-                                             caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_pid: 123,
+                                             caller_process_cmdline: '/cmd', caller_process_name: 'cmd', caller_process_id: 123,
                                              favorite_color: 'red', name: 'Fred' },
                                          ])
 

@@ -6,7 +6,7 @@ RSpec.describe Command::Defaults do
 
     it 'should return true for keys in the lookup tale' do
       expect(subject.has?(:timestamp)).to be_truthy
-      expect(subject.has?(:caller_process_pid)).to be_truthy
+      expect(subject.has?(:caller_process_id)).to be_truthy
     end
 
     it 'should return false for keys that are not in the lookup table' do
@@ -33,8 +33,8 @@ RSpec.describe Command::Defaults do
       expect(subject.fetch(:caller_process_name)).to match(/\/rspec(\s|$)/)
     end
 
-    it 'should provide a default for the caller_process_pid' do
-      expect(subject.fetch(:caller_process_pid)).to match(Process.pid)
+    it 'should provide a default for the caller_process_id' do
+      expect(subject.fetch(:caller_process_id)).to match(Process.pid)
     end
 
     it 'should return nil for an unknown key' do

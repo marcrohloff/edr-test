@@ -12,7 +12,7 @@ RSpec.describe Command::ModifyFile do
                                 username:               'marc',
                                 caller_process_cmdline: '/bin/rspec',
                                 caller_process_name:    'rspec',
-                                caller_process_pid:     456,
+                                caller_process_id:      456,
                                 file_path:) }
 
 
@@ -64,7 +64,7 @@ RSpec.describe Command::ModifyFile do
                                              username:               'marc',
                                              caller_process_cmdline: '/bin/rspec',
                                              caller_process_name:    'rspec',
-                                             caller_process_pid:     456,
+                                             caller_process_id:      456,
                                              activity_descriptor:    'modified',
                                              file_path:)
   end

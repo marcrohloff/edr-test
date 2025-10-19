@@ -44,7 +44,7 @@ RSpec.describe Runner::CommandExecution do
       def execute!; end
     end
 
-    let(:base_attributes)  { { username: 'admin', caller_process_pid: 123, caller_process_cmdline: '/bin/cmd', caller_process_name: 'cmd' } }
+    let(:base_attributes)  { { username: 'admin', caller_process_id: 123, caller_process_cmdline: '/bin/cmd', caller_process_name: 'cmd' } }
     let(:command_class)    { CETestActivityCommand }
     let(:command_instance) { command_class.new(**base_attributes, name: 'johndoe') }
 

@@ -8,7 +8,7 @@ RSpec.describe Command::StartProcess do
                                 username:                'marc',
                                 caller_process_cmdline:  '/bin/rspec',
                                 caller_process_name:     'rspec',
-                                caller_process_pid:      456,
+                                caller_process_id:       456,
                                 started_process_cmdline: 'test-process') }
 
 
@@ -20,8 +20,8 @@ RSpec.describe Command::StartProcess do
       expect(described_class.attribute_names).to include(*attributes.map(&:to_s))
     end
 
-    it 'should not have a started_process_pid attribute' do
-      expect(described_class.attribute_names).not_to include('started_process_pid')
+    it 'should not have a started_process_id attribute' do
+      expect(described_class.attribute_names).not_to include('started_process_id')
     end
 
     describe 'validation' do
@@ -51,7 +51,7 @@ RSpec.describe Command::StartProcess do
 
       subject.execute!
 
-      expect(subject.started_process_pid).to eq(1123)
+      expect(subject.started_process_id).to eq(1123)
     end
 
   end
@@ -67,9 +67,9 @@ RSpec.describe Command::StartProcess do
                                              username:                'marc',
                                              caller_process_cmdline:  '/bin/rspec',
                                              caller_process_name:     'rspec',
-                                             caller_process_pid:      456,
+                                             caller_process_id:       456,
                                              started_process_cmdline: 'test-process',
-                                             started_process_pid:     1123)
+                                             started_process_id:      1123)
   end
 
 end

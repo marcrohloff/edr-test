@@ -11,10 +11,10 @@ module Command
       attribute :username,               :string
       attribute :caller_process_cmdline, :string
       attribute :caller_process_name,    :string
-      attribute :caller_process_pid,     :integer
+      attribute :caller_process_id,      :integer
 
       validates :timestamp, :username,
-                :caller_process_cmdline, :caller_process_name, :caller_process_pid,
+                :caller_process_cmdline, :caller_process_name, :caller_process_id,
                 presence: true
     end
 

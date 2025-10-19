@@ -6,7 +6,7 @@ module Command
 
     attribute :started_process_cmdline, :string
 
-    attr_reader :started_process_pid # output only value
+    attr_reader :started_process_id # output only value
 
     validates :started_process_cmdline,
               presence: true
@@ -19,11 +19,11 @@ module Command
       pid = Process.spawn(started_process_cmdline)
       Process.detach(pid)
 
-      @started_process_pid = pid
+      @started_process_id = pid
     end
 
     def activity_log_data
-      readonly_attributes = { started_process_pid: }.compact
+      readonly_attributes = { started_process_id: }.compact
       super.merge(readonly_attributes)
     end
 

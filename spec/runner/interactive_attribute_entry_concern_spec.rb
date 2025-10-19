@@ -8,7 +8,7 @@ RSpec.describe Runner::InteractiveAttributeEntry do
   end
 
   class IAETestCommand < Command::Base
-    attribute :caller_process_pid, :integer
+    attribute :caller_process_id,  :integer
     attribute :source_address,     :string
     attribute :source_port,        :integer
   end
@@ -46,30 +46,30 @@ RSpec.describe Runner::InteractiveAttributeEntry do
   it 'should display the default value if there is one' do
     set_input('123')
 
-    allow(command).to receive(:attribute_names).and_return([:caller_process_pid])
+    allow(command).to receive(:attribute_names).and_return([:caller_process_id])
     subject.assign_attributes(command)
 
-    expect(output.string).to eq("Enter a value for Caller Process PID [#{Process.pid}]:\n")
-    expect(command.caller_process_pid).to eq(123)
+    expect(output.string).to eq("Enter a value for Caller Process ID [#{Process.pid}]:\n")
+    expect(command.caller_process_id).to eq(123)
   end
 
   it 'should set the default if there is one and the user enters nothing' do
     set_input('')
 
-    allow(command).to receive(:attribute_names).and_return([:caller_process_pid])
+    allow(command).to receive(:attribute_names).and_return([:caller_process_id])
     subject.assign_attributes(command)
 
-    expect(command.caller_process_pid).to eq(Process.pid)
+    expect(command.caller_process_id).to eq(Process.pid)
   end
 
   it 'should prefer the current value over the default (if there is one)' do
     set_input('')
-    command.caller_process_pid = 789
+    command.caller_process_id = 789
 
-    allow(command).to receive(:attribute_names).and_return([:caller_process_pid])
+    allow(command).to receive(:attribute_names).and_return([:caller_process_id])
     subject.assign_attributes(command)
 
-    expect(command.caller_process_pid).to eq(789)
+    expect(command.caller_process_id).to eq(789)
   end
 
   it 'should return multiple values' do

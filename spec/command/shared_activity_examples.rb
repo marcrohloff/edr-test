@@ -1,7 +1,7 @@
 RSpec.shared_examples 'an activity command' do
 
   base_attributes = %i[timestamp username
-                       caller_process_cmdline caller_process_name caller_process_pid]
+                       caller_process_cmdline caller_process_name caller_process_id]
 
   describe 'attributes' do
 
