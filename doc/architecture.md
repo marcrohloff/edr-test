@@ -105,3 +105,7 @@ objects:
 * Improve reusing previous values (for example I create a file and delete it)
 
 * There is lots of room for improving error handling
+* 
+* Make it possible to execute a signle command with command line parameters.
+  This would make it possible to do advanced scripting using something
+  like bash.
