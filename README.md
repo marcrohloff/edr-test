@@ -63,7 +63,7 @@ the file is a complete json hash representing a single entry. This allows it to
 write, read and process large amounts of data  wthout the overhead of trying to
 parse a whole file
 
-* MOre extensive documentation of the data structure is [here](doc/data_structure.md)
+* More extensive documentation of the data structure is [here](doc/data_structure.md)
 
 ### Testing
 
